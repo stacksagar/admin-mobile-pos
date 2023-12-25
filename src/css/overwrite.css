@@ -1,0 +1,67 @@
+/* Material UI Table */
+
+.server-table
+  .MuiDataGrid-footerContainer.MuiDataGrid-withBorderColor.css-wop1k0-MuiDataGrid-footerContainer {
+  display: none;
+}
+
+/* Pagination */
+.pagination,
+.pagination * {
+  transition: all 0.4s !important;
+}
+.page-item.disabled {
+  opacity: 0.5;
+}
+.dark .page-item .page-link {
+  background: #374151;
+  color: #ddd;
+  border: none !important;
+}
+.dark .active .page-link {
+  background: #0d9df0;
+  color: white;
+}
+
+.page-link:hover {
+  transform: scale(1.05) !important;
+  transition: all 0.1s !important;
+}
+
+.active .page-link {
+  transform: scale(1.2) !important;
+  transition: all 0.1s !important;
+}
+
+input.rti--input {
+  min-width: 100%;
+  padding: 10px !important;
+}
+
+@keyframes slow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.slow-spin {
+  animation: slow-spin 30s linear infinite;
+}
+
+@keyframes animate-zoom {
+  to {
+    transform: scale(1);
+  }
+
+  from {
+    transform: scale(1.35);
+  }
+}
+
+.animate-zoom {
+  animation: animate-zoom 0.5s alternate-reverse infinite;
+}
+.rti--container input {
+  padding: 14px !important;
+  border-radius: 4px !important;
+  border: unset !important; 
+}
