@@ -18,6 +18,9 @@ type Props = {
   avoidUpdateToast?: boolean;
   _onSuccessAdd?: (supplier: SupplierT) => void;
   _finally?: () => void;
+
+  paid_amount: number;
+  due_amount: number;
 };
 
 export default function useSupplierFormik({
@@ -26,6 +29,8 @@ export default function useSupplierFormik({
   avoidUpdateToast,
   _onSuccessAdd,
   _finally,
+  paid_amount,
+  due_amount,
 }: Props) {
   const axios = useAxiosPrivate();
   const dispatch = useAppDispatch();
@@ -80,11 +85,19 @@ export default function useSupplierFormik({
     formik.setFieldValue('email', editItem?.email || '');
     formik.setFieldValue(
       'total_puchase_amount',
-      editItem?.total_puchase_amount || 0
+      Number(editItem?.total_puchase_amount || '0') + paid_amount + due_amount
     );
-    formik.setFieldValue('total_paid', editItem?.total_paid || 0);
-    formik.setFieldValue('total_due', editItem?.total_due || 0);
-  }, [editItem]);
+
+    formik.setFieldValue(
+      'total_paid',
+      Number(editItem?.total_paid || '0') + paid_amount
+    );
+
+    formik.setFieldValue(
+      'total_due',
+      Number(editItem?.total_due || '0') + due_amount
+    );
+  }, [editItem, paid_amount, due_amount]);
 
   return { formik };
 }
@@ -114,6 +127,7 @@ export const SupplierForms = ({ formik }: { formik: any }) => (
       touched={formik.touched.address}
       error={formik.errors.address}
     />
+
     <MuiTextField
       id="nid"
       label="NID"
@@ -137,28 +151,25 @@ export const SupplierForms = ({ formik }: { formik: any }) => (
       error={formik.errors.email}
     />
     <MuiTextField
+      disabled
       id="total_puchase_amount"
       label="Total Puchase Amount"
       type="number"
-      {...formik.getFieldProps('total_puchase_amount')}
-      touched={formik.touched.total_puchase_amount}
-      error={formik.errors.total_puchase_amount}
+      value={formik.values.total_puchase_amount}
     />
     <MuiTextField
+      disabled
       id="total_paid"
       label="Total Paid"
       type="number"
-      {...formik.getFieldProps('total_paid')}
-      touched={formik.touched.total_paid}
-      error={formik.errors.total_paid}
+      value={formik.values.total_paid}
     />
     <MuiTextField
+      disabled
       id="total_due"
       label="Total Due"
       type="number"
-      {...formik.getFieldProps('total_due')}
-      touched={formik.touched.total_due}
-      error={formik.errors.total_due}
+      value={formik.values.total_due}
     />
   </div>
 );

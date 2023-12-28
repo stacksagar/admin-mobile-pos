@@ -12,9 +12,7 @@ import { UseBoolean } from '../../../hooks/state/useBoolean';
 
 interface Props {
   loading?: boolean;
-
   openModal: UseBoolean;
-
   closeModal?: boolean;
   closeText?: string;
   submitText?: string;

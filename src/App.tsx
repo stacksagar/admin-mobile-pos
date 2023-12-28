@@ -14,7 +14,8 @@ import public_pages from './routes/public.routes';
 import AccessDenied from './pages/AccessDenied';
 import Settings from './pages/Settings/Settings';
 import setting_pages from './routes/setting.routes';
-import { useSetting } from './context/setting';
+import { useSetting } from './context/setting'; 
+import MultipleStringsOfKey from './components/MultipleStringsOfKey/MultipleStringsOfKey';
 
 const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
@@ -47,6 +48,10 @@ function App() {
   ) : (
     <Routes>
       {/* Components Pages / Not part of this application */}
+
+      <Route path="" element={<DefaultLayout />}>
+        <Route path="/test" element={<MultipleStringsOfKey />} />
+      </Route>
 
       {/* Open for everyone/public */}
       {Object.entries(public_pages).map(([key, Element]) => (

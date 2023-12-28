@@ -54,6 +54,11 @@ export function useEditProductData({
       productFormik.setFieldValue('model', product?.model);
       productFormik.setFieldValue('categoryId', product?.categoryId);
       productFormik.setFieldValue('supplierId', product?.supplierId);
+
+      productFormik.setFieldValue('with_variant', product?.with_variant);
+      productFormik.setFieldValue('total_purchase_amount', product?.total_purchase_amount);
+      productFormik.setFieldValue('total_sale_amount', product?.total_sale_amount);
+      productFormik.setFieldValue('variants', product?.variants);
     });
   }, [searchParams]);
 

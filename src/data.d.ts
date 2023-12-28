@@ -129,16 +129,21 @@ interface ProductT extends Common {
   supplier: SupplierT;
   variants?: ProductVariant[];
   custom?: KeyValuePair;
+  with_variant?: boolean;
+  total_purchase_amount: number;
+  total_sale_amount: number;
 }
 
 interface ProductVariant {
-  imei: string;
-  color?: string;
-  processor?: string;
-  ram?: string;
-  rom?: string;
-  purchase_price?: number;
-  sale_price?: number;
+  uid: string;
+  processor: string;
+  ram: string;
+  rom: string;
+  purchase_price: number;
+  sale_price: number;
+  imeis: {
+    [colorName: string]: string[];
+  };
 }
 
 interface PageT extends Common {

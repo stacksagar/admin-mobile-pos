@@ -2,6 +2,7 @@ import { Button, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { uid } from 'uid';
 import { ProductVariant } from '../../data';
+import ColorAndIMEI from './ColorAndIMEI';
 
 interface Props {
   variant: ProductVariant;
@@ -21,18 +22,26 @@ function Variant({ index, variant, variants, setVariants }: Props) {
     setVariants((p) => p.map((v, i) => (i === index ? newVariant : v)));
   }
 
-  return (
-    <div className="grid grid-cols-1 gap-2 rounded bg-gray-50 p-3 shadow dark:bg-gray-900 sm:grid-cols-2">
-      <TextField
-        value={newVariant.imei}
-        onChange={changeNewVariant}
-        onMouseLeave={shouldUpdate}
-        id="imei"
-        className="w-full"
-        label="IMEI"
-        size="small"
-      />
+  // function setColorAndIMEIs(key: string, value: string[]) {
+  //   console.log('key ', key);
+  //   console.log('value ', value);
+  //   setVariants((p) =>
+  //     p.map((v, i) =>
+  //       i === index
+  //         ? {
+  //             ...newVariant,
+  //             imeis: {
+  //               ...newVariant.imeis,
+  //               [key]: value,
+  //             },
+  //           }
+  //         : v
+  //     )
+  //   );
+  // }
 
+  return (
+    <div className="grid grid-cols-1 gap-2 rounded bg-gray-50 p-3 shadow sm:grid-cols-2 dark:bg-gray-900">
       <TextField
         value={newVariant.processor}
         onChange={changeNewVariant}
@@ -109,6 +118,13 @@ function Variant({ index, variant, variants, setVariants }: Props) {
         size="small"
       />
 
+      <div className="col-span-full">
+        <ColorAndIMEI
+          defaultIMEIs={variant.imeis}
+          onChange={(IMEISSS) => console.log('IMEISSS ', IMEISSS)}
+        />
+      </div>
+
       <div className="flex w-fit items-center gap-2">
         <Button
           onClick={() =>
@@ -136,7 +152,9 @@ export default function ProductVariants({
   setVariants: React.Dispatch<React.SetStateAction<ProductVariant[]>>;
 }) {
   const empty_variant: ProductVariant = {
-    imei: '',
+    imeis: {
+      white: ["324SDFS", "324SDFS"]
+    },
     color: '',
     processor: '',
     ram: '',
@@ -155,7 +173,7 @@ export default function ProductVariants({
     <div className="col-span-full space-y-5">
       {variants?.map((v, index) => (
         <Variant
-          key={v.imei + uid()}
+          key={uid()}
           index={index}
           variants={variants}
           setVariants={setVariants}

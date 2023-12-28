@@ -14,8 +14,8 @@ export default function SidebarHeader({
   sidebarOpen,
 }: Props) {
   return (
-    <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-      <NavLink to="/">
+    <div className="flex items-center justify-between gap-2 px-6 max-h-[75px] border-b">
+      <NavLink to="/" className="py-2">
         {/* <div className="flex items-center justify-around gap-2">
           <div className="text-2xl text-blue-300 transform -rotate-12">
             <FIcon icon="mobile-screen" />

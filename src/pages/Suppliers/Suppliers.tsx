@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from '../../app/store';
 import MaterialTableServer from '../../common/MaterialUi/Table/MaterialTableServer';
 import { fetchSuppliers } from '../../app/features/suppliers/requests';
 import { GridColDef } from '@mui/x-data-grid';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import useTableSelectAll from '../../hooks/table/useTableSelectAll';
 import useFetchWithPagination from '../../hooks/redux/useFetchWithPagination';
 import Breadcrumb from '../../components/Breadcrumb';
@@ -19,6 +19,10 @@ import {
 import { useState } from 'react';
 import { showDate } from '../../utils/date';
 import makeToSerialize from '../../utils/makeToSerialize';
+import { SupplierT } from '../../data';
+import FIcon from '../../common/Icons/FIcon';
+import MuiContentModal from '../../common/MaterialUi/Modal/MuiContentModal';
+import SupplierHistories from './SupplierHistories';
 
 export default function Suppliers() {
   const appDispatch = useAppDispatch();
@@ -38,9 +42,10 @@ export default function Suppliers() {
 
   const { selectedIds, onChangeSelected } = useTableSelectAll();
   const [selectedID, setSelectedID] = useState<any>();
-  const [editItem, setEditItem] = useState<Supplier>({} as Supplier);
+  const [editItem, setEditItem] = useState<SupplierT>({} as SupplierT);
 
   const showAddSupplierPopup = useBoolean(false);
+  const showSupplierHistories = useBoolean(false);
 
   const showSelectedDeletePopup = useBoolean();
   const selectedDeleting = useBoolean();
@@ -76,9 +81,28 @@ export default function Suppliers() {
       },
     },
     { field: 'company_name', headerName: 'Company Name', width: 200 },
-    { field: 'supplier_name', headerName: 'Supplier Name', width: 130 },
+    {
+      field: 'supplier_name',
+      headerName: 'Supplier Name',
+      width: 150,
+      renderCell(params) {
+        return (
+          <div>
+            <p> {params.row.supplier_name} </p>
+
+            {params?.row?.phone ? (
+              <a href={`tel:${params?.row?.phone}`}>
+                {params.row.phone}
+                <IconButton size="small">
+                  <FIcon icon="phone" />
+                </IconButton>
+              </a>
+            ) : null}
+          </div>
+        );
+      },
+    },
     { field: 'address', headerName: 'Address', width: 110 },
-    { field: 'phone', headerName: 'Phone', width: 110 },
 
     {
       field: 'total_puchase_amount',
@@ -94,7 +118,7 @@ export default function Suppliers() {
       headerName: 'Actions',
       sortable: false,
       filterable: false,
-      width: 200,
+      width: 300,
 
       renderCell(params) {
         return (
@@ -109,6 +133,18 @@ export default function Suppliers() {
               }}
             >
               Edit
+            </Button>
+            <Button
+              variant="contained"
+              title="View"
+              color="info"
+              size="small"
+              onClick={() => {
+                setSelectedID(params?.id || '');
+                showSupplierHistories.setTrue();
+              }}
+            >
+              View
             </Button>
             <Button
               title="Delete"
@@ -133,6 +169,13 @@ export default function Suppliers() {
       <Breadcrumb pageName="Suppliers" />
 
       <AddSupplierPopup openModal={showAddSupplierPopup} editItem={editItem} />
+
+      <MuiContentModal
+        title={'Supplier Purchase Histories'}
+        openModal={showSupplierHistories}
+      >
+        <SupplierHistories supplierID={selectedID} />
+      </MuiContentModal>
 
       <MuiConfirmationDialog
         loading={selectedDeleting.true}
@@ -163,7 +206,7 @@ export default function Suppliers() {
         addNewText={'Add New Supplier'}
         addNewHandler={() => {
           showAddSupplierPopup.setTrue();
-          setEditItem({} as Supplier);
+          setEditItem({} as SupplierT);
         }}
         // filterHandler={() => {}}
         // downloadHandler={() => {}}

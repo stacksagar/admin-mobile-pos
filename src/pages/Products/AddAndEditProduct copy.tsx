@@ -100,8 +100,8 @@ export default function AddAndEditProduct() {
     initialValues: {
       name: '',
       slug: '',
-      purchase_price: '',
-      sale_price: '',
+      purchase_price: 0,
+      sale_price: 0,
       in_stock: '',
       barcode: '',
       custom: {},
@@ -160,8 +160,6 @@ export default function AddAndEditProduct() {
   }
 
   const { formik: supplierFormik } = useSupplierFormik({
-    due_amount: Number(shFormik.values.due_amount),
-    paid_amount: Number(shFormik.values.paid_amount),
     editItem: selectedSupplier.data,
     avoidUpdateToast: true,
     _onSuccessAdd(supplier: SupplierT) {
@@ -182,59 +180,38 @@ export default function AddAndEditProduct() {
   });
 
   useEffect(() => {
-    if (!productFormik.values.with_variant) return;
-
-    let in_stock: number = 0;
-    let total_purchase_amount: number = 0;
-    let total_sale_amount: number = 0;
-
-    productFormik.values?.variants?.map((variant) => {
-      Object.values(variant?.imeis).map((imeis) => {
-        in_stock += imeis?.length;
-        total_purchase_amount += variant.purchase_price * imeis?.length;
-        total_sale_amount += variant.sale_price * imeis?.length;
-      });
-    });
-
-    productFormik.setFieldValue('in_stock', in_stock);
-    productFormik.setFieldValue('total_purchase_amount', total_purchase_amount);
-    productFormik.setFieldValue('total_sale_amount', total_sale_amount);
-    shFormik.setFieldValue('paid_amount', total_purchase_amount);
-
-    productFormik.setFieldValue(
-      'purchase_price',
-      total_purchase_amount / in_stock
-    );
-
-    productFormik.setFieldValue('sale_price', total_sale_amount / in_stock);
-  }, [productFormik.values.variants]);
-
-  useEffect(() => {
-    const due_amount = Number(shFormik.values.due_amount || '0');
-    const total_purchase = productFormik.values.total_purchase_amount || 0;
-    if (
-      due_amount < 0 ||
-      due_amount > productFormik.values.total_purchase_amount
-    ) {
-      shFormik.setFieldValue('due_amount', '');
+    const due_amount = Number(shFormik.values.due_amount);
+    const total_purchase_amount = productFormik.values.total_purchase_amount;
+    if (due_amount > total_purchase_amount) {
+      shFormik.setFieldValue('due_amount', 0);
       return;
     }
-
-    shFormik.setFieldValue('paid_amount', total_purchase - due_amount);
+    if (!due_amount) {
+      shFormik.setFieldValue('paid_amount', total_purchase_amount);
+      return;
+    }
+    shFormik.setFieldValue('paid_amount', total_purchase_amount - due_amount);
   }, [shFormik.values.due_amount]);
 
+  // useEffect(() => {
+  //   const paid_amount = Number(shFormik.values.paid_amount);
+  //   const total_purchase_amount = productFormik.values.total_purchase_amount;
+
+  //   if (paid_amount > total_purchase_amount) {
+  //     shFormik.setFieldValue('paid_amount', 0);
+  //     return;
+  //   }
+
+  //   shFormik.setFieldValue('due_amount', total_purchase_amount - paid_amount);
+  // }, [shFormik.values.paid_amount]);
+
   useEffect(() => {
-    const paid_amount = Number(shFormik.values.paid_amount || '0');
-    const total_purchase = productFormik.values.total_purchase_amount || 0;
-    if (
-      paid_amount < 0 ||
-      paid_amount > productFormik.values.total_purchase_amount
-    ) {
-      shFormik.setFieldValue('paid_amount', '');
-      return;
-    }
-    shFormik.setFieldValue('due_amount', total_purchase - paid_amount);
-  }, [shFormik.values.paid_amount]);
+    let in_stock: number = 0;
+
+    productFormik.setFieldValue('in_stock', in_stock);
+
+    console.log('productFormik.values ', productFormik.values);
+  }, [productFormik.values.variants]);
 
   return (
     <div>
