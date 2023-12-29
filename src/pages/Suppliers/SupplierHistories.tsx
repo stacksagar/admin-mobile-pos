@@ -32,10 +32,12 @@ export default function SupplierHistories({ supplierID }: PropsT) {
     console.log('data ', data);
   }, [data]);
   return (
-    <div> 
+    <div className='grid grid-cols-1 gap-4'> 
       {
         data?.map((history)=>(
-          <div>
+          <div className='bg-gray-50 dark:bg-gray-900 p-4 rounded shadow'>           
+            <p> Product: {history?.product?.name} </p>
+            <p> Supplier: {history?.supplier?.supplier_name} </p>
             <p> Due Amount: {history?.due_amount} </p>
             <p> Paid Amount: {history?.paid_amount} </p>
           </div>

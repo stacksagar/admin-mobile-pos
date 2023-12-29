@@ -21,11 +21,7 @@ const SidebarItemGroup = ({
   const [open, setOpen] = useState<boolean>(
     pathname === '/forms' || pathname.includes('forms')
   );
-
-  // const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
-  // const [sidebarExpanded, setSidebarExpanded] = useState(
-  //   storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
-  // );
+ 
 
   const handleClick = () => {
     setOpen((p) => !p);
@@ -39,7 +35,7 @@ const SidebarItemGroup = ({
     <li>
       <NavLink
         to="#"
-        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-gray-800 hover:text-white`}
+        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out text-black dark:text-white hover:bg-gray-800 hover:text-white`}
         onClick={(e) => {
           e.preventDefault();
           // sidebarExpanded ? handleClick() : setSidebarExpanded(true);

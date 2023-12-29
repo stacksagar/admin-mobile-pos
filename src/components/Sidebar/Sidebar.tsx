@@ -58,7 +58,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-[99] flex h-screen w-72.5 flex-col overflow-y-hidden bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+      className={`absolute left-0 top-0 z-[99] flex h-screen w-72.5 flex-col overflow-y-hidden bg-white duration-300 ease-linear lg:static lg:translate-x-0 dark:bg-boxdark ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
@@ -76,24 +76,58 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <ul className="mb-6 flex flex-col gap-1.5">
             <SidebarItem to="/" title="Dashboard" CustomIcon={<GridSvg />} />
 
-            <SidebarItem
-              to="/products-categories"
-              title="Categories"
-              icon="list"
-            />
-            <SidebarItem to="/suppliers" title="Suppliers" icon="users" />
-            <SidebarItem to="/products" title="Stock Products" icon="list" />
             <SidebarItem to="/pos" title="Sale Create POS" icon="p" />
             <SidebarItem to="/sales-and-return" title="Sales" icon="file" />
-            <SidebarItem
-              to="/expenses-categories"
-              title="Expenses Categories"
-              icon="list-dots"
+
+            <SidebarItemGroup
+              title="Suppliers"
+              icon="bars-staggered"
+              items={[
+                {
+                  to: '/suppliers',
+                  title: 'Suppliers',
+                  icon: 'users',
+                },
+                {
+                  to: '/supplier-purchase-history',
+                  title: 'Purchase Histories',
+                  icon: 'history',
+                },
+              ]}
             />
-            <SidebarItem
-              to="/expenses"
-              title="All Expenses"
+
+            <SidebarItemGroup
+              title="Products"
+              icon="bars-staggered"
+              items={[
+                {
+                  to: '/products-categories',
+                  title: 'Categories',
+                  icon: 'users',
+                },
+                {
+                  to: '/products',
+                  title: 'Products',
+                  icon: 'list',
+                },
+              ]}
+            />
+
+            <SidebarItemGroup
+              title="Expenses"
               icon="money-bill"
+              items={[
+                {
+                  to: '/expenses-categories',
+                  title: 'Categories',
+                  icon: 'list-dots',
+                },
+                {
+                  to: '/expenses',
+                  title: 'All Expenses',
+                  icon: 'money-bill',
+                },
+              ]}
             />
 
             <SidebarItem to="/orders" title="Orders" icon="list-ol" />

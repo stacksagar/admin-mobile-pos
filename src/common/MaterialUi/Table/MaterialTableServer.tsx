@@ -45,7 +45,6 @@ export default function MaterialTableServer({
   hidePagination,
   loading,
   filterKeys,
-
   addNewLink,
   addNewText,
   addNewHandler,

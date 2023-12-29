@@ -5,6 +5,7 @@ import POSInvoiceFooter from './POSInvoiceFooter';
 import { usePOSData } from '../../context/pos';
 import { uid } from 'uid';
 import { useEffect } from 'react';
+import { ProductT } from '../../data';
 
 export default function POSInvoice() {
   const {
@@ -52,7 +53,7 @@ export default function POSInvoice() {
               <TableCell>
                 {product?.products?.length ? (
                   <div>
-                    {product?.products?.map((p) => (
+                    {product?.products?.map((p: ProductT) => (
                       <div key={Math.random()}> {p?.name} </div>
                     ))}
                   </div>

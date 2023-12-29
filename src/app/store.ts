@@ -17,8 +17,9 @@ import expensesCategoriesSlice from './features/expenses/expensesCategoriesSlice
 import saleSlice from './features/sales/salesSlice';
 import stockOutProductsSlice from './features/products/stockOutProductsSlice';
 import orderSlice from './features/orders/orderSlice';
-import pageSlice from './features/pages/pagesSlice';import warrantySlice from './features/warranties/warrantySlice';
-
+import pageSlice from './features/pages/pagesSlice';
+import warrantySlice from './features/warranties/warrantySlice';
+import supplierHistories from './features/supplier-histories/supplierHistories';
 
 export const store = configureStore({
   reducer: {
@@ -39,6 +40,7 @@ export const store = configureStore({
     sales: saleSlice.reducer,
     pages: pageSlice.reducer,
     warranties: warrantySlice.reducer,
+    supplier_histories: supplierHistories.reducer,
   },
 
   devTools: API_URL.includes('localhost'),

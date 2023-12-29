@@ -32,6 +32,10 @@ const Pages = lazy(() => import('../pages/Pages/Pages'));
 const AddEditPage = lazy(() => import('../pages/Pages/AddEditPage'));
 const POS = lazy(() => import('../pages/POS/POS'));
 const POSInvoice = lazy(() => import('../pages/POSInvoice/POSInvoice'));
+
+const SupplierHistoryInvoice = lazy(
+  () => import('../pages/SupplierHistoryInvoice/SupplierHistoryInvoice')
+);
 const Settings = lazy(() => import('../pages/Settings/Settings'));
 const Warranties = lazy(() => import('../pages/Warranties/Warranties'));
 
@@ -62,6 +66,7 @@ const admin_pages = {
   orders: Orders,
   pos: POS,
   pos_invoice: POSInvoice,
+  'supplier-history-invoice': SupplierHistoryInvoice,
   'change-password': ChangePassword,
   settings: Settings,
   warranties: Warranties,
