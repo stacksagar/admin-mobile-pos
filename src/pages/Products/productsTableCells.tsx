@@ -5,10 +5,12 @@ import { useAppDispatch } from '../../app/store';
 import { addProduct } from '../../app/features/products/stockInProductsSlice';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { uid } from 'uid';
+import { ProductT } from '../../data';
 
-const productsTableCells: MuiTableHeader<Product>[] = [
+const productsTableCells: MuiTableHeader<ProductT>[] = [
   {
-    key: 'sl',
+    key: 'id',
+    label: 'ID',
   },
   {
     key: 'createdAt',

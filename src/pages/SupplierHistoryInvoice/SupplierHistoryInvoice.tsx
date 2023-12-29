@@ -43,7 +43,7 @@ export default function SupplierHistoryInvoice() {
             </TableCell>
             <TableCell className="border-default border-l">
               <b>Unit Price</b>
-            </TableCell> 
+            </TableCell>
             <TableCell className="border-default border-l">
               <b>TOTAL</b>
             </TableCell>
@@ -58,7 +58,7 @@ export default function SupplierHistoryInvoice() {
             </TableCell>
             <TableCell className="border-default border-l">
               {history?.product?.purchase_price}
-            </TableCell> 
+            </TableCell>
 
             <TableCell className="border-default border-l">
               ৳ {history?.total_purchase_amount}
@@ -76,15 +76,13 @@ export default function SupplierHistoryInvoice() {
               <td className="p-1 text-right font-medium tracking-wider">
                 {history?.total_purchase_amount}
               </td>
-            </tr> 
+            </tr>
             <tr className="border-b border-gray-400">
               <td className="p-1">
                 <b className="text-sm capitalize"> Discount </b>
               </td>
               <td className="p-1 text-center"> = </td>
-              <td className="p-1 text-right font-medium tracking-wider">
-                0
-              </td>
+              <td className="p-1 text-right font-medium tracking-wider">0</td>
             </tr>
             <tr>
               <td className="p-1">

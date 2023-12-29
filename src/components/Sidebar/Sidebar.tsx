@@ -81,7 +81,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <SidebarItemGroup
               title="Suppliers"
-              icon="bars-staggered"
+              icon="users-line"
               items={[
                 {
                   to: '/suppliers',

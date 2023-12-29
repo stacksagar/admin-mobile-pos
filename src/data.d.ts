@@ -7,6 +7,7 @@ interface KeyValuePair {
 
 interface Common {
   id?: number;
+  sl?: number;
   createdAt?: string;
   updatedAt?: string;
 }

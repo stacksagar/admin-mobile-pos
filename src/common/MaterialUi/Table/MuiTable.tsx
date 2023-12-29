@@ -57,7 +57,7 @@ export default function MuiTable({
 
   const showDeleteWarning = useBoolean();
 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,

@@ -17,7 +17,7 @@ export default function SupplierHistoryInvoiceHeader({ history }: PropsT) {
   return (
     <div>
       <div className="hide_print flex justify-end gap-2">
-        <Link to={`/pos`}>
+        <Link to={`/supplier-purchase-history`}>
           <Button variant="contained" color="success">
             <FIcon icon="backpack" />
             Back

@@ -1,32 +1,30 @@
 import useBoolean from '../../hooks/state/useBoolean';
 import toast_async from '../../utils/toast_async';
-import { axios_private } from '../../api/api';
 import Breadcrumb from '../../components/Breadcrumb';
 import MuiTable from '../../common/MaterialUi/Table/MuiTable';
-import productsTableCells from './productsTableCells';
-import { Link } from 'react-router-dom';
-import { Button } from '@mui/material';
-import { ProductT } from '../../data';
-import { useQuery } from '@tanstack/react-query';
+import productsTableCells from './supplierHistoriesTableCells';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import { useQuery } from '@tanstack/react-query';
+import { SupplierHistoryT } from '../../data';
 
 export default function Users() {
   const axios = useAxiosPrivate();
-  const deleting = useBoolean();
 
-  const { data, refetch, isLoading } = useQuery<ProductT[]>(
-    ['fetchStockInProducts'],
+  const { data, refetch, isLoading } = useQuery<SupplierHistoryT[]>(
+    ['fetchSupplierHistory'],
     async () => {
-      const { data } = await axios.get(`/product/stock-in/all`);
+      const { data } = await axios.get(`/supplier-history/all`);
       return data || [];
     }
   );
+
+  const deleting = useBoolean();
 
   async function onMultipleDelete(ids: ID[]) {
     deleting.setTrue();
     try {
       await toast_async<any>(
-        axios_private.delete('/product/multiple', { data: { ids } }),
+        axios.delete('/supplier-history/multiple', { data: { ids } }),
         {
           start: 'Deleting.. wait a moment!',
           success: `Successfully deleted ${ids?.length} items!`,
@@ -41,7 +39,7 @@ export default function Users() {
 
   return (
     <div>
-      <Breadcrumb pageName="Products" />
+      <Breadcrumb pageName="Purchased Histories" />
       <br />
 
       <div className="max-w-full overflow-hidden">
@@ -51,12 +49,7 @@ export default function Users() {
           tableCells={productsTableCells}
           rows={data || []}
           loading={isLoading}
-          CustomButton={
-            <Button variant="contained" size="medium">
-              <Link to="/add-product"> Buy Product </Link>
-            </Button>
-          }
-          tableTitle="Products"
+          tableTitle="Supplier Purchase Histories"
           deleting={deleting}
         />
       </div>
