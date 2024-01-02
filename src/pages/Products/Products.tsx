@@ -17,13 +17,18 @@ export default function Users() {
   const { data, refetch, isLoading } = useQuery<ProductT[]>(
     ['fetchStockInProducts'],
     async () => {
-      const { data } = await axios.get(`/product/stock-in/all`);
-      return data || [];
+      try {
+        const { data } = await axios.get(`/product/stock-in/all`);
+        return data || [];
+      } catch (error) {
+        console.log('error ', error);
+      }
     }
   );
 
   async function onMultipleDelete(ids: ID[]) {
     deleting.setTrue();
+
     try {
       await toast_async<any>(
         axios_private.delete('/product/multiple', { data: { ids } }),

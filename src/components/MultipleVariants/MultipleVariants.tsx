@@ -4,8 +4,10 @@ import { ProductVariant } from '../../data';
 
 export default function MultipleVariants({
   onChange,
+  defaultVariants,
 }: {
   onChange: (variants: ProductVariant[]) => void;
+  defaultVariants?: ProductVariant[];
 }) {
   const [variants, setVariants] = useState<ProductVariant[]>([
     {
@@ -22,6 +24,12 @@ export default function MultipleVariants({
   useEffect(() => {
     onChange(variants);
   }, [variants]);
+
+  useEffect(() => {
+    if (defaultVariants && defaultVariants?.length > 0) {
+      setVariants(defaultVariants);
+    }
+  }, [defaultVariants]);
 
   return <VariantForm variants={variants} setVariants={setVariants} />;
 }

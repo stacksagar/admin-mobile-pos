@@ -22,10 +22,7 @@ export default function MultipleStringsOfKey({
       [colorName]: [...prevItems[colorName], ''],
     }));
   };
-
-  useEffect(() => {
-    console.log('initialItems ', initialItems);
-  }, [initialItems]);
+ 
 
   const handleStringChange = (
     colorName: string,
@@ -81,21 +78,20 @@ export default function MultipleStringsOfKey({
 
   return (
     <div className="spaec-y-3">
-      <div className="flex flex-col items-center gap-2 py-4">
+      <div className="flex items-center py-4">
         <MuiTextField
           size="small"
           label="Color"
           value={color}
           onChange={(e) => setColor(e.target.value)}
         />
-        <Button
-          size="medium"
-          onClick={addColor}
-          variant="contained"
-          className="w-full whitespace-nowrap"
+        <button   
+        type='button'
+          onClick={addColor} 
+          className="w-fit px-4 py-2 bg-blue-600 text-white font-medium focus:ring -ml-2 relative z-50 whitespace-nowrap h-full"
         >
           Add Color
-        </Button>
+        </button>
       </div>
 
       {Object.entries(items).map(([colorName, values], _colorIndex) => (

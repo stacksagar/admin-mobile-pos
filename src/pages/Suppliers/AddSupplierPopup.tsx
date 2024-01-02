@@ -1,10 +1,11 @@
 import MuiResponsiveDialog from '../../common/MaterialUi/Modal/MuiResponsiveDialog';
+import { SupplierT } from '../../data';
 import { UseBoolean } from '../../hooks/state/useBoolean';
 import useSupplierFormik, { SupplierForms } from './useSupplierFormik';
 
 interface Props {
   openModal: UseBoolean;
-  editItem?: Supplier;
+  editItem?: SupplierT;
 }
 
 export default function AddSupplierPopup({ openModal, editItem }: Props) {

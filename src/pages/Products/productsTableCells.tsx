@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../app/store';
 import { addProduct } from '../../app/features/products/stockInProductsSlice';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { uid } from 'uid';
-import { ProductT } from '../../data';
+import { ProductT } from '../../data'; 
 
 const productsTableCells: MuiTableHeader<ProductT>[] = [
   {
@@ -61,6 +61,7 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
     ActionButtons({ row: product }) {
       const axios = useAxiosPrivate();
       const dispatch = useAppDispatch();
+
       async function copyProduct() {
         const copyData = {
           ...product,
@@ -77,6 +78,17 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
 
       return (
         <>
+          <Link to={`/add-product-quantity?id=${product.id}`}>
+            <Button
+              variant="contained"
+              title="Edit"
+              color="warning"
+              size="small"
+            >
+              Add
+            </Button>
+          </Link>
+
           <Link to={`/edit-product?id=${product.id}`}>
             <Button variant="contained" title="Edit" size="small">
               Edit

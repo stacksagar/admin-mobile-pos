@@ -29,8 +29,8 @@ export default function useSupplierFormik({
   avoidUpdateToast,
   _onSuccessAdd,
   _finally,
-  paid_amount,
-  due_amount,
+  paid_amount = 0,
+  due_amount = 0,
 }: Props) {
   const axios = useAxiosPrivate();
   const dispatch = useAppDispatch();
@@ -42,9 +42,9 @@ export default function useSupplierFormik({
       phone: '',
       nid: '',
       email: '',
-      total_puchase_amount: '',
-      total_paid: '',
-      total_due: '',
+      total_puchase_amount: 0,
+      total_paid: 0,
+      total_due: 0,
     },
 
     onSubmit: async (values) => {
@@ -102,7 +102,13 @@ export default function useSupplierFormik({
   return { formik };
 }
 
-export const SupplierForms = ({ formik }: { formik: any }) => (
+export const SupplierForms = ({
+  formik,
+  disabledAmount,
+}: {
+  formik: any;
+  disabledAmount?: boolean;
+}) => (
   <div className="flex flex-col gap-6">
     <MuiTextField
       id="supplier_name"
@@ -158,18 +164,24 @@ export const SupplierForms = ({ formik }: { formik: any }) => (
       value={formik.values.total_puchase_amount}
     />
     <MuiTextField
-      disabled
+      disabled={disabledAmount}
       id="total_paid"
       label="Total Paid"
       type="number"
       value={formik.values.total_paid}
+      {...formik.getFieldProps('total_paid')}
+      touched={formik.touched.total_paid}
+      error={formik.errors.total_paid}
     />
     <MuiTextField
-      disabled
+      disabled={disabledAmount}
       id="total_due"
       label="Total Due"
       type="number"
       value={formik.values.total_due}
+      {...formik.getFieldProps('total_due')}
+      touched={formik.touched.total_due}
+      error={formik.errors.total_due}
     />
   </div>
 );

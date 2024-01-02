@@ -3,9 +3,15 @@ import { lazy } from 'react';
 const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
 const EditProfile = lazy(() => import('../pages/EditProfile'));
 const Users = lazy(() => import('../pages/Users/Users'));
+
 const AddAndEditProduct = lazy(
   () => import('../pages/Products/AddAndEditProduct')
 );
+
+const AddProductQuantity = lazy(
+  () => import('../pages/Products/AddProductQuantity')
+);
+
 const ProductCategories = lazy(
   () => import('../pages/ProductsCategories/ProductCategories')
 );
@@ -54,6 +60,7 @@ const admin_pages = {
   'stock-out-products': StockOutProducts,
   'add-product': AddAndEditProduct,
   'edit-product': AddAndEditProduct,
+  'add-product-quantity': AddProductQuantity,
   pages: Pages,
   'add-page': AddEditPage,
   'edit-page': AddEditPage,

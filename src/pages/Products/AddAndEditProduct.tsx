@@ -242,9 +242,9 @@ export default function AddAndEditProduct() {
 
       <form
         onSubmit={supplierFormik.handleSubmit}
-        className="grid gap-12 xl:grid-cols-12"
+        className="flex flex-col gap-12 xl:flex-row"
       >
-        <div className="space-y-8 bg-white p-8 xl:col-span-8 dark:bg-black">
+        <div className="w-full space-y-8 bg-white p-8 dark:bg-black">
           <div className="grid grid-cols-1 gap-x-6 gap-y-8 md:grid-cols-2">
             <div className="col-span-full">
               <h3 className="section_header">Product Details</h3>
@@ -262,17 +262,21 @@ export default function AddAndEditProduct() {
               label="Custom Barcode"
               {...productFormik.getFieldProps('barcode')}
             />
-            <MuiSearchSelect
-              label={
-                selectedSupplier?.data?.supplier_name
-                  ? 'Supplier'
-                  : 'Select Supplier'
-              }
-              defaultTitle={selectedSupplier?.data?.supplier_name || null}
-              options={suppliers}
-              titleKey="supplier_name"
-              onChange={selectedSupplier.set}
-            />
+
+            {editProduct?.id ? null : (
+              <MuiSearchSelect
+                label={
+                  selectedSupplier?.data?.supplier_name
+                    ? 'Supplier'
+                    : 'Select Supplier'
+                }
+                defaultTitle={selectedSupplier?.data?.supplier_name || null}
+                options={suppliers}
+                titleKey="supplier_name"
+                onChange={selectedSupplier.set}
+              />
+            )}
+
             <div className="flex items-center gap-2">
               <div className="w-full">
                 <CategoriesSelector
@@ -352,6 +356,7 @@ export default function AddAndEditProduct() {
             {productFormik?.values?.with_variant ? (
               <div className="col-span-full">
                 <MultipleVariants
+                  defaultVariants={editProduct.variants}
                   onChange={(variants) =>
                     productFormik.setFieldValue('variants', variants)
                   }
@@ -422,33 +427,36 @@ export default function AddAndEditProduct() {
           </div>
         </div>
 
-        <div className="h-fit space-y-8 bg-white p-8 xl:col-span-4 dark:bg-black">
-          <h3 className="section_header">Supplier Details</h3>
-          <SupplierForms formik={supplierFormik} />
+        {editProduct?.id ? null : (
+          <div className="h-fit w-full space-y-8 bg-white p-8 xl:w-2/6 dark:bg-black">
+            <h3 className="section_header">Supplier Details</h3>
+            <SupplierForms disabledAmount formik={supplierFormik} />
 
-          <br />
+            <br />
 
-          {editProduct?.id ? null : (
-            <div className="space-y-3">
-              <h3 className="section_header">Supplier Invoice History</h3>
-              {supplierFormik.values.supplier_name}
-              <MuiTextField
-                required
-                type="number"
-                id="name"
-                label="Paid Amount"
-                {...shFormik.getFieldProps('paid_amount')}
-              />
-              <MuiTextField
-                required
-                type="number"
-                id="name"
-                label="Due Amount"
-                {...shFormik.getFieldProps('due_amount')}
-              />
-            </div>
-          )}
-        </div>
+            {editProduct?.id ? null : (
+              <div className="space-y-3">
+                <h3 className="section_header">Supplier Invoice History</h3>
+                {supplierFormik.values.supplier_name}
+                <MuiTextField
+                  required
+                  type="number"
+                  id="name"
+                  label="Paid Amount"
+                  {...shFormik.getFieldProps('paid_amount')}
+                />
+
+                <MuiTextField
+                  required
+                  type="number"
+                  id="name"
+                  label="Due Amount"
+                  {...shFormik.getFieldProps('due_amount')}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </form>
     </div>
   );
