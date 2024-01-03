@@ -12,14 +12,15 @@ import FIcon from '../../common/Icons/FIcon';
 import InputForUpload, {
   InputForUploadSkeleton,
 } from '../../common/Forms/InputForUpload';
-import onChangeSetURL from '../../utils/onChangeSetURL'; 
+import onChangeSetURL from '../../utils/onChangeSetURL';
 import { useEffect } from 'react';
 import remove_empty_value_keys from '../../utils/remove_empty_value_keys';
 import error_message from '../../utils/error_message';
+import { UserT } from '../../data';
 
 interface Props {
   openModal: UseBoolean;
-  editItem?: User;
+  editItem?: UserT;
 }
 
 export default function AddUserPopup({ openModal, editItem }: Props) {

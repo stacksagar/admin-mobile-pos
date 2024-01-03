@@ -5,13 +5,9 @@ import { UseBoolean } from '../../hooks/state/useBoolean';
 import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch } from '../../app/store';
 
-import {
-  addCustomer,
-  updateCustomer,
-} from '../../app/features/customers/customerSlice';
 import { UserT } from '../../data';
+import { MenuItem, Select } from '@mui/material';
 
 type Props = {
   openModal?: UseBoolean;
@@ -25,11 +21,9 @@ export default function useCustomerFormik({
   openModal,
   editItem,
   avoidUpdateToast,
-  _onSuccessAdd,
   _finally,
 }: Props) {
   const axios = useAxiosPrivate();
-  const dispatch = useAppDispatch();
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -39,22 +33,18 @@ export default function useCustomerFormik({
       due: 0,
       paid: 0,
       total_puchase_amount: 0,
+      role: 'user',
     },
 
     onSubmit: async (values) => {
       formik.setSubmitting(true);
       try {
         if (editItem?.id) {
-          const { data } = await axios.put(`/customer/${editItem.id}`, values);
-          data?.customer && dispatch(updateCustomer(data?.customer));
-          !avoidUpdateToast && toast({ message: 'Customer Updated!' });
+          await axios.put(`/auth/user/${editItem.id}`, values);
+          !avoidUpdateToast && toast({ message: 'User Updated!' });
         } else {
-          const { data } = await axios.post('/customer', values);
-          if (data?.customer) {
-            dispatch(addCustomer(data?.customer));
-            _onSuccessAdd && _onSuccessAdd(data?.customer);
-            toast({ message: 'New Customer Added!' });
-          }
+          await axios.post('/auth/user', values);
+          !avoidUpdateToast && toast({ message: 'User Created!' });
         }
       } catch (error) {
         toast({
@@ -79,6 +69,7 @@ export default function useCustomerFormik({
       due: editItem?.due || 0,
       paid: editItem?.paid || 0,
       total_puchase_amount: editItem?.total_puchase_amount || 0,
+      role: editItem?.role as any,
     });
   }, [editItem]);
 
@@ -106,31 +97,30 @@ export const CustomerForms = ({ formik }: { formik: any }) => (
       error={formik.errors.phone}
     />
     <MuiTextField
-      label="Customer Email"
+      label="Email"
       {...formik.getFieldProps('email')}
       touched={formik.touched.email}
       error={formik.errors.email}
     />
-    <MuiTextField
-      type="number"
-      label="Total Puchase Amount"
-      {...formik.getFieldProps('total_puchase_amount')}
-      touched={formik.touched.total_puchase_amount}
-      error={formik.errors.total_puchase_amount}
-    />
-    <MuiTextField
-      type="number"
-      label="Paid Amount"
-      {...formik.getFieldProps('paid')}
-      touched={formik.touched.paid}
-      error={formik.errors.paid}
-    />
-    <MuiTextField
-      type="number"
-      label="Due Amount"
-      {...formik.getFieldProps('due')}
-      touched={formik.touched.due}
-      error={formik.errors.due}
-    />
+
+    <Select
+      size="small"
+      labelId="role"
+      id="role"
+      {...formik.getFieldProps('role')}
+    >
+      <MenuItem value="">
+        <em> Select Role </em>
+      </MenuItem>
+      <MenuItem value="user">
+        Role - Normal User <small> - (Default: User) </small>
+      </MenuItem>
+      <MenuItem value="moderator">
+        Role - Moderator <small> - (Only Can Read) </small>{' '}
+      </MenuItem>
+      <MenuItem value="admin">
+        Role - Admin <small> - (Create/Read/Update/Delete) </small>{' '}
+      </MenuItem>
+    </Select>
   </div>
 );

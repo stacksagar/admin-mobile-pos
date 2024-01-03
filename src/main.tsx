@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <ContextsProvider>
       <MaterialUIThemeProvider>
         <ReduxProvider store={store}>
-          <BrowserRouter>
+          <BrowserRouter basename="/admin">
             <QueryClientProvider client={queryClient}>
               <ToastContainer />
               <App />

@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { axios_private } from '../api/api';
+import { SettingT } from '../data';
 
 interface Context {
-  setting?: Setting;
+  setting?: SettingT;
   setSetting?: any;
 }
 

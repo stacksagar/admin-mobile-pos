@@ -7,7 +7,7 @@ import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { useQuery } from '@tanstack/react-query';
 import { SupplierHistoryT } from '../../data';
 
-export default function Users() {
+export default function SupplierHistories() {
   const axios = useAxiosPrivate();
 
   const { data, refetch, isLoading } = useQuery<SupplierHistoryT[]>(

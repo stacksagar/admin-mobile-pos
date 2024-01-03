@@ -102,10 +102,11 @@ interface UserT extends Common {
   password?: string;
   picture?: string;
   address?: string;
+  nid?: any;
   permissions?: any;
   due?: number;
   paid?: number;
-  total_puchase_amount?: number | string;
+  total_puchase_amount?: number;
   refresh_token?: string;
   is_customer?: boolean;
 

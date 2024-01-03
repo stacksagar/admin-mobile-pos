@@ -18,7 +18,6 @@ import {
   fetchStockInProducts,
   fetchProductsCategories,
 } from '../../app/features/products/requests';
-import { fetchSuppliers } from '../../app/features/suppliers/requests';
 import useObject from '../../hooks/state/useObject';
 import useSupplierFormik, {
   SupplierForms,
@@ -41,6 +40,7 @@ import KeyValueForm from '../../common/Forms/KeyValueForm';
 import { CategoryT, ProductVariant, SupplierT } from '../../data';
 import MultipleVariants from '../../components/MultipleVariants/MultipleVariants';
 import { useAuth } from '../../context/auth';
+import { useQuery } from '@tanstack/react-query';
 
 export default function AddAndEditProduct() {
   const { auth } = useAuth();
@@ -48,8 +48,16 @@ export default function AddAndEditProduct() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const axios = useAxiosPrivate();
+
+  const { data: suppliers } = useQuery<SupplierT[]>(
+    ['fetchSuppliers'],
+    async () => {
+      const { data } = await axios.get(`/supplier/all`);
+      return data || [];
+    }
+  );
+
   const { data: categories } = useAppSelector((s) => s.products_categories);
-  const { data: suppliers } = useAppSelector((s) => s.suppliers);
   const { data: products } = useAppSelector((s) => s.products);
   const { data: models } = useAppSelector((s) => s.models);
   const { data: brands } = useAppSelector((s) => s.brands);
@@ -63,11 +71,6 @@ export default function AddAndEditProduct() {
   useFetchDispatch({
     data: categories,
     fetchFunc: fetchProductsCategories,
-  });
-
-  useFetchDispatch({
-    data: suppliers,
-    fetchFunc: fetchSuppliers,
   });
 
   useFetchDispatch({
@@ -308,7 +311,7 @@ export default function AddAndEditProduct() {
                     : 'Select Supplier'
                 }
                 defaultTitle={selectedSupplier?.data?.supplier_name || null}
-                options={suppliers}
+                options={suppliers || []}
                 titleKey="supplier_name"
                 onChange={selectedSupplier.set}
               />

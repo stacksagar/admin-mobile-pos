@@ -33,6 +33,7 @@ export default function useSupplierFormik({
   const dispatch = useAppDispatch();
   const formik = useFormik({
     initialValues: {
+      id: null,
       company_name: '',
       supplier_name: '',
       address: '',
@@ -54,6 +55,8 @@ export default function useSupplierFormik({
             _onSuccessAdd && _onSuccessAdd(data);
             toast({ message: 'New Supplier Added!' });
           }
+        } else {
+          values.id && (await axios.put(`/supplier/${values.id}`, values));
         }
       } catch (error) {
         toast({
@@ -70,12 +73,14 @@ export default function useSupplierFormik({
   });
 
   useEffect(() => {
+    formik.setFieldValue('id', editItem?.id);
     formik.setFieldValue('company_name', editItem?.company_name || '');
     formik.setFieldValue('supplier_name', editItem?.supplier_name || '');
     formik.setFieldValue('address', editItem?.address || '');
     formik.setFieldValue('phone', editItem?.phone || '');
     formik.setFieldValue('nid', editItem?.nid || '');
     formik.setFieldValue('email', editItem?.email || '');
+
     formik.setFieldValue(
       'total_puchase_amount',
       Number(editItem?.total_puchase_amount || '0') + paid_amount + due_amount

@@ -1,7 +1,7 @@
 import MuiResponsiveDialog from '../../common/MaterialUi/Modal/MuiResponsiveDialog';
 import { UserT } from '../../data';
 import { UseBoolean } from '../../hooks/state/useBoolean';
-import useCustomerFormik, { CustomerForms } from './useCustomerFormik';
+import useCustomerFormik, { CustomerForms } from './useUserFormik';
 
 interface Props {
   openModal: UseBoolean;

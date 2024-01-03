@@ -54,18 +54,19 @@ const supplierHistoriesTableCells: MuiTableHeader<
     label: 'Supplier',
     RenderComponent({ row }) {
       return (
-        <div>
+        <div className="w-fit">
           <p>Name: {row?.supplier?.supplier_name}</p>
           <p>Company: {row?.supplier?.supplier_name}</p>
+          <div className="my-1.5 border-t dark:border-gray-600"></div>
           <p className="flex justify-between">
-            <span>Purchased Total </span>
-            <span> = {row?.supplier?.total_puchase_amount}</span>
+            <span>Total </span>
+            <span> = {row?.total_purchase_amount}</span>
           </p>
           <p className="flex justify-between">
-            <span>Paid </span> <span> = {row?.supplier?.total_paid}</span>
+            <span>Paid </span> <span> = {row?.paid_amount}</span>
           </p>
           <p className="flex justify-between">
-            <span>Due </span> <span> = {row?.supplier?.total_due}</span>
+            <span>Due </span> <span> = {row?.due_amount}</span>
           </p>
         </div>
       );
