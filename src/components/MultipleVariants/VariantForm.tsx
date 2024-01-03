@@ -5,9 +5,16 @@ import MultipleStringsOfKey from '../MultipleStringsOfKey/MultipleStringsOfKey';
 interface PropsT {
   variants: ProductVariant[];
   setVariants: React.Dispatch<React.SetStateAction<ProductVariant[]>>;
+  previousImeis?: string[];
+  isEditPage?: boolean;
 }
 
-export default function VariantForm({ variants, setVariants }: PropsT) {
+export default function VariantForm({
+  variants,
+  setVariants,
+  previousImeis,
+  isEditPage,
+}: PropsT) {
   const addVariant = () => {
     setVariants((prevVariants) => [
       ...prevVariants,
@@ -58,7 +65,8 @@ export default function VariantForm({ variants, setVariants }: PropsT) {
             </p>
             <button
               type="button"
-              onClick={() => removeVariant(index)}
+              disabled={isEditPage}
+              onClick={() => (isEditPage ? null : removeVariant(index))}
               title="Add Variant"
               className="inline-flex w-fit items-center justify-center gap-2 rounded border border-transparent bg-red-500 px-3 py-2 text-sm font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-gray-800"
             >
@@ -77,6 +85,7 @@ export default function VariantForm({ variants, setVariants }: PropsT) {
                 >
                   <MuiTextField
                     size="small"
+                    disabled={isEditPage}
                     label={key?.split('_').join(' ')}
                     value={(variant as any)[key]}
                     onChange={(e) =>
@@ -89,6 +98,8 @@ export default function VariantForm({ variants, setVariants }: PropsT) {
 
             <div className="col-span-full">
               <MultipleStringsOfKey
+                isEditPage={isEditPage}
+                previousImeis={previousImeis}
                 initialItems={variant.imeis}
                 onChange={(imeis) => handleInputChange(index, 'imeis', imeis)}
               />
@@ -99,7 +110,8 @@ export default function VariantForm({ variants, setVariants }: PropsT) {
 
       <button
         type="button"
-        onClick={addVariant}
+        disabled={isEditPage}
+        onClick={isEditPage ? () => {} : addVariant}
         title="Add Variant"
         className="inline-flex w-full items-center justify-center gap-2 rounded border border-transparent bg-purple-600 px-2 py-3 text-sm font-semibold text-white transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-gray-800"
       >

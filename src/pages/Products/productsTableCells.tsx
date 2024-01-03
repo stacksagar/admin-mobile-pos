@@ -1,11 +1,7 @@
 import { Button } from '@mui/material';
 import { showDate } from '../../utils/date';
 import { Link } from 'react-router-dom';
-import { useAppDispatch } from '../../app/store';
-import { addProduct } from '../../app/features/products/stockInProductsSlice';
-import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { uid } from 'uid';
-import { ProductT } from '../../data'; 
+import { ProductT } from '../../data';
 
 const productsTableCells: MuiTableHeader<ProductT>[] = [
   {
@@ -26,8 +22,14 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
     RenderComponent({ row: product }) {
       return (
         <div>
-          <div> Purchase: ৳{product?.purchase_price} </div>
-          <div> Sell: ৳{product?.sale_price} </div>
+          <div>
+            {product?.with_variant ? 'Avarage ' : ''} Purchase: ৳
+            {Math.floor(product?.purchase_price)}
+          </div>
+          <div>
+            {product?.with_variant ? 'Avarage ' : ''} Sell: ৳
+            {Math.floor(product?.sale_price)}
+          </div>
         </div>
       );
     },
@@ -59,22 +61,22 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
   {
     key: 'actions',
     ActionButtons({ row: product }) {
-      const axios = useAxiosPrivate();
-      const dispatch = useAppDispatch();
+      // const axios = useAxiosPrivate();
+      // const dispatch = useAppDispatch();
 
-      async function copyProduct() {
-        const copyData = {
-          ...product,
-          name: product.name + `-c${uid(3)}`,
-          total_sale: 0,
-          id: null,
-          updatedAt: null,
-          createdAt: null,
-        };
+      // async function copyProduct() {
+      //   const copyData = {
+      //     ...product,
+      //     name: product.name + `-c${uid(3)}`,
+      //     total_sale: 0,
+      //     id: null,
+      //     updatedAt: null,
+      //     createdAt: null,
+      //   };
 
-        const { data } = await axios.post('/product', copyData);
-        data && dispatch(addProduct(data));
-      }
+      //   const { data } = await axios.post('/product', copyData);
+      //   data && dispatch(addProduct(data));
+      // }
 
       return (
         <>
@@ -95,7 +97,7 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
             </Button>
           </Link>
 
-          <Button
+          {/* <Button
             onClick={copyProduct}
             variant="contained"
             title="Edit"
@@ -103,7 +105,7 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
             size="small"
           >
             Copy
-          </Button>
+          </Button> */}
         </>
       );
     },

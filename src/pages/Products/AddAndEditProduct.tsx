@@ -40,8 +40,10 @@ import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import KeyValueForm from '../../common/Forms/KeyValueForm';
 import { CategoryT, ProductVariant, SupplierT } from '../../data';
 import MultipleVariants from '../../components/MultipleVariants/MultipleVariants';
+import { useAuth } from '../../context/auth';
 
 export default function AddAndEditProduct() {
+  const { auth } = useAuth();
   const isEditPage = location.pathname.includes('edit-product');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -109,7 +111,7 @@ export default function AddAndEditProduct() {
       model: '',
       with_variant: false,
       variants: [] as ProductVariant[],
-      //
+
       total_purchase_amount: 0,
       total_sale_amount: 0,
     },
@@ -122,6 +124,7 @@ export default function AddAndEditProduct() {
         description: product_desc_editor.current?.getContents(true),
         details: product_details_editor.current?.getContents(true),
         thumbnail: productImages[0],
+        adminId: auth?.user?.id,
       };
 
       if (selectedSupplier?.data?.id) {
@@ -139,7 +142,10 @@ export default function AddAndEditProduct() {
         } else {
           const { data } = await axios.post('/product', {
             ...productData,
-            supplierInvoice: shFormik.values,
+            supplierInvoice: {
+              ...shFormik.values,
+              quantity: productFormik.values.in_stock,
+            },
           });
           data && dispatch(addProduct(data));
           toast({ message: 'Added new product!' });
@@ -160,10 +166,11 @@ export default function AddAndEditProduct() {
   }
 
   const { formik: supplierFormik } = useSupplierFormik({
+    avoidCreateSupplier:
+      isEditPage || selectedSupplier?.data?.id ? true : false,
     due_amount: Number(shFormik.values.due_amount),
     paid_amount: Number(shFormik.values.paid_amount),
     editItem: selectedSupplier.data,
-    avoidUpdateToast: true,
     _onSuccessAdd(supplier: SupplierT) {
       productFormik.setFieldValue('supplierId', supplier.id);
     },
@@ -210,6 +217,24 @@ export default function AddAndEditProduct() {
   }, [productFormik.values.variants]);
 
   useEffect(() => {
+    if (productFormik?.values.with_variant) return;
+
+    const sale_price = productFormik.values.sale_price || 0;
+    const purchase_price = productFormik.values.purchase_price || 0;
+    const in_stock = productFormik.values.in_stock || 0;
+    const total_purchase_amount = Number(purchase_price) * Number(in_stock);
+    const total_sale_amount = Number(sale_price) * Number(in_stock);
+
+    shFormik.setFieldValue('paid_amount', total_purchase_amount);
+    productFormik.setFieldValue('total_purchase_amount', total_purchase_amount);
+    productFormik.setFieldValue('total_sale_amount', total_sale_amount);
+  }, [
+    productFormik.values.purchase_price,
+    productFormik.values.sale_price,
+    productFormik.values.in_stock,
+  ]);
+
+  useEffect(() => {
     const due_amount = Number(shFormik.values.due_amount || '0');
     const total_purchase = productFormik.values.total_purchase_amount || 0;
     if (
@@ -226,6 +251,7 @@ export default function AddAndEditProduct() {
   useEffect(() => {
     const paid_amount = Number(shFormik.values.paid_amount || '0');
     const total_purchase = productFormik.values.total_purchase_amount || 0;
+
     if (
       paid_amount < 0 ||
       paid_amount > productFormik.values.total_purchase_amount
@@ -233,8 +259,19 @@ export default function AddAndEditProduct() {
       shFormik.setFieldValue('paid_amount', '');
       return;
     }
+
     shFormik.setFieldValue('due_amount', total_purchase - paid_amount);
   }, [shFormik.values.paid_amount]);
+
+  const [previousImeis, setPrevIMEIs] = useState([] as string[]);
+
+  useEffect(() => {
+    editProduct?.variants?.map((v) => {
+      Object.values(v.imeis).map((imeis) => {
+        setPrevIMEIs((p) => [...p, ...imeis]);
+      });
+    });
+  }, [editProduct]);
 
   return (
     <div>
@@ -314,19 +351,23 @@ export default function AddAndEditProduct() {
 
             <div>
               <MuiTextField
+                disabled={isEditPage || productFormik?.values?.with_variant}
                 id="in_stock"
                 label="In Stock"
                 type="number"
                 {...productFormik.getFieldProps('in_stock')}
               />
-              <div className="mt-1">
-                <span>Total:</span>
-                <b>
-                  {(Number(productFormik.values.purchase_price) || 0) *
-                    (Number(productFormik.values.in_stock) || 0) ||
-                    productFormik.values.total_purchase_amount}
-                </b>
-              </div>
+
+              {productFormik?.values?.with_variant ? null : (
+                <div className="mt-1">
+                  <span>Total Purchase:</span>
+                  <b>
+                    {(Number(productFormik.values.purchase_price) || 0) *
+                      (Number(productFormik.values.in_stock) || 0) ||
+                      productFormik.values.total_purchase_amount}
+                  </b>
+                </div>
+              )}
             </div>
 
             <div>
@@ -339,23 +380,30 @@ export default function AddAndEditProduct() {
               />
             </div>
 
-            <div className="flex cursor-pointer items-center gap-1 text-lg font-semibold">
-              <label className="cursor-pointer" htmlFor="with_variants">
-                With Variants
-              </label>
-              <Checkbox
-                id="with_variants"
-                checked={productFormik.values.with_variant}
-                {...productFormik.getFieldProps('in_stock')}
-                onChange={(e) =>
-                  productFormik.setFieldValue('with_variant', e.target.checked)
-                }
-              />
-            </div>
+            {isEditPage ? null : (
+              <div className="flex cursor-pointer items-center gap-1 text-lg font-semibold">
+                <label className="cursor-pointer" htmlFor="with_variants">
+                  With Variants
+                </label>
+                <Checkbox
+                  id="with_variants"
+                  checked={productFormik.values.with_variant}
+                  {...productFormik.getFieldProps('in_stock')}
+                  onChange={(e) =>
+                    productFormik.setFieldValue(
+                      'with_variant',
+                      e.target.checked
+                    )
+                  }
+                />
+              </div>
+            )}
 
             {productFormik?.values?.with_variant ? (
               <div className="col-span-full">
                 <MultipleVariants
+                  isEditPage={isEditPage}
+                  previousImeis={isEditPage ? previousImeis || [] : []}
                   defaultVariants={editProduct.variants}
                   onChange={(variants) =>
                     productFormik.setFieldValue('variants', variants)
@@ -428,7 +476,7 @@ export default function AddAndEditProduct() {
         </div>
 
         {editProduct?.id ? null : (
-          <div className="h-fit w-full space-y-8 bg-white p-8 xl:w-2/6 dark:bg-black">
+          <div className="h-fit w-full space-y-8 bg-white p-8 dark:bg-black xl:w-2/6">
             <h3 className="section_header">Supplier Details</h3>
             <SupplierForms disabledAmount formik={supplierFormik} />
 

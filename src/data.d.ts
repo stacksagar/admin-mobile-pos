@@ -93,17 +93,36 @@ export interface SupplierHistoryT extends Common {
 }
 
 interface UserT extends Common {
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  picture: string;
   role: Roles;
-  permissions?: any;
-  address?: string;
-  due?: number;
 
+  name: string;
+  email?: string;
+  phone?: string;
+
+  password?: string;
+  picture?: string;
+  address?: string;
+  permissions?: any;
+  due?: number;
+  paid?: number;
+  total_puchase_amount?: number | string;
   refresh_token?: string;
+  is_customer?: boolean;
+
+  histories?: SellHistoryT[];
+  purchase_histories?: SupplierHistoryT[];
+}
+
+export interface SellHistoryT extends Common {
+  paid: number;
+  due: number;
+  total: number;
+  quantity: number;
+
+  productId?: number;
+  customerId?: number;
+  product?: ProductT;
+  user?: UserT;
 }
 
 interface CategoryT extends Common {

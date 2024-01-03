@@ -12,6 +12,14 @@ const supplierHistoriesTableCells: MuiTableHeader<
   },
 
   {
+    key: 'createdAt',
+    label: 'Purchase Date',
+    RenderComponent({ row: history }) {
+      return <div> {showDate(history?.createdAt, true)} </div>;
+    },
+  },
+
+  {
     key: 'productId',
     label: 'Product',
     RenderComponent({ row }) {
@@ -20,8 +28,21 @@ const supplierHistoriesTableCells: MuiTableHeader<
           <h6 className="max-w-[140px] whitespace-pre-line break-words text-lg font-medium">
             {row?.product?.name}
           </h6>
-          <p className="w-fit rounded bg-green-600 px-2 py-1 text-sm text-white">
-            In Stock: {row?.product?.in_stock}
+          <p>
+            <b className="font-medium">Purchase Quantity = </b>
+            {row?.quantity}
+          </p>
+          <p>
+            <b className="font-medium">Purchase Price (Unit) = </b>
+            {Math.floor(row?.total_purchase_amount / row?.quantity)}
+          </p>
+          <p>
+            <b className="font-medium">Total Purchase Price = </b>
+            {Math.floor(row?.total_purchase_amount)}
+          </p>
+          <p className="w-fit rounded bg-green-600 px-2 py-0.5 text-white">
+            <b className="font-medium">Now In Stock = </b>
+            {row?.product?.in_stock}
           </p>
         </div>
       );
@@ -36,7 +57,16 @@ const supplierHistoriesTableCells: MuiTableHeader<
         <div>
           <p>Name: {row?.supplier?.supplier_name}</p>
           <p>Company: {row?.supplier?.supplier_name}</p>
-          <p>Purchased Total: {row?.total_purchase_amount}</p>
+          <p className="flex justify-between">
+            <span>Purchased Total </span>
+            <span> = {row?.supplier?.total_puchase_amount}</span>
+          </p>
+          <p className="flex justify-between">
+            <span>Paid </span> <span> = {row?.supplier?.total_paid}</span>
+          </p>
+          <p className="flex justify-between">
+            <span>Due </span> <span> = {row?.supplier?.total_due}</span>
+          </p>
         </div>
       );
     },
@@ -48,20 +78,15 @@ const supplierHistoriesTableCells: MuiTableHeader<
     RenderComponent({ row }) {
       return (
         <div>
-          <p className='text-xl font-medium'>{row?.user?.name}</p>
-          <p className='px-1 py-0.5 bg-pink-500 text-white w-fit rounded opacity-90'>Role: {row?.user?.role} </p>
+          <p className="text-xl font-medium">{row?.user?.name}</p>
+          <p className="w-fit rounded bg-pink-500 px-1 py-0.5 text-white opacity-90">
+            Role: {row?.user?.role}
+          </p>
         </div>
       );
     },
   },
 
-  {
-    key: 'createdAt',
-    label: 'Date',
-    RenderComponent({ row: history }) {
-      return <div> {showDate(history?.createdAt, true)} </div>;
-    },
-  },
   {
     key: 'actions',
     ActionButtons({ row: history }) {

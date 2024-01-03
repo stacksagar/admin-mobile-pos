@@ -52,7 +52,7 @@ export default function Suppliers() {
   async function deleteMultipleItems() {
     selectedDeleting.setTrue();
     try {
-      await axios_private.delete('/supplier/delete-multiples', {
+      await axios_private.delete('/supplier/multiple', {
         data: { ids: selectedID || selectedIds },
       });
 

@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import { Button } from '@mui/material';
+import toast from '../../libs/toast';
 
 type ItemT = { [colorName: string]: string[] };
 
 interface PropsT {
   initialItems?: ItemT;
   onChange?: (items: ItemT) => void;
+  previousImeis?: string[];
+  isEditPage?: boolean;
 }
 
 export default function MultipleStringsOfKey({
   initialItems,
   onChange,
+  previousImeis,
+  isEditPage,
 }: PropsT) {
   const [color, setColor] = useState('');
   const [items, setItems] = useState(initialItems || {});
@@ -22,13 +27,26 @@ export default function MultipleStringsOfKey({
       [colorName]: [...prevItems[colorName], ''],
     }));
   };
- 
+
+  // check is prev exist then make disable EDIT/Remove
+  function isPrevExist(imei: string) {
+    return previousImeis?.includes(imei);
+  }
 
   const handleStringChange = (
     colorName: string,
     index: number,
     value: string
   ) => {
+    if (isPrevExist(value)) {
+      // alert('This IMEI already exist!');
+      toast({
+        message: 'This IMEI already exist',
+        type: 'warning',
+      });
+      return;
+    }
+
     setItems((prevItems) => ({
       ...prevItems,
       [colorName]: [
@@ -82,13 +100,15 @@ export default function MultipleStringsOfKey({
         <MuiTextField
           size="small"
           label="Color"
+          disabled={isEditPage}
           value={color}
           onChange={(e) => setColor(e.target.value)}
         />
-        <button   
-        type='button'
-          onClick={addColor} 
-          className="w-fit px-4 py-2 bg-blue-600 text-white font-medium focus:ring -ml-2 relative z-50 whitespace-nowrap h-full"
+        <button
+          type="button"
+          disabled={isEditPage}
+          onClick={isEditPage ? () => {} : addColor}
+          className="relative z-50 -ml-2 h-full w-fit whitespace-nowrap bg-blue-600 px-4 py-2 font-medium text-white focus:ring"
         >
           Add Color
         </button>
@@ -110,41 +130,59 @@ export default function MultipleStringsOfKey({
             <Button
               size="small"
               variant="contained"
+              disabled={isEditPage}
               color="error"
-              onClick={() => removeColor(colorName)}
+              onClick={() => (isEditPage ? null : removeColor(colorName))}
             >
               Remove Color
             </Button>
           </div>
-          {values.map((value, stringIndex) => (
-            <div
-              key={`${colorName}-${stringIndex}`}
-              className="flex items-center gap-2"
-            >
-              <MuiTextField
-                size="small"
-                label="IMEI"
-                value={value}
-                onChange={(e) =>
-                  handleStringChange(colorName, stringIndex, e.target.value)
-                }
-              />
-              <Button
-                color="warning"
-                variant="contained"
-                onClick={() => handleStringRemove(colorName, stringIndex)}
+          {values.map((value, stringIndex) =>
+            isPrevExist(value) ? (
+              <div
+                key={`${colorName}-${stringIndex}`}
+                className="flex items-center gap-2"
               >
-                Remove
-              </Button>
-            </div>
-          ))}
+                <MuiTextField
+                  size="small"
+                  label="IMEI"
+                  value={value}
+                  disabled
+                />
+                <Button disabled color="info" variant="contained">
+                  Previous
+                </Button>
+              </div>
+            ) : (
+              <div
+                key={`${colorName}-${stringIndex}`}
+                className="flex items-center gap-2"
+              >
+                <MuiTextField
+                  size="small"
+                  label="IMEI"
+                  value={value}
+                  onChange={(e) =>
+                    handleStringChange(colorName, stringIndex, e.target.value)
+                  }
+                />
+                <Button
+                  color="warning"
+                  variant="contained"
+                  onClick={() => handleStringRemove(colorName, stringIndex)}
+                >
+                  Remove
+                </Button>
+              </div>
+            )
+          )}
           <Button
             size="small"
             variant="contained"
-            onClick={() => handleStringAdd(colorName)}
+            disabled={isEditPage}
+            onClick={() => (isEditPage ? null : handleStringAdd(colorName))}
           >
-            {' '}
-            Add IMEI{' '}
+            Add IMEI
           </Button>
         </div>
       ))}

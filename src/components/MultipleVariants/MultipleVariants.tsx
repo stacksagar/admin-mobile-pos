@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react';
 import VariantForm from './VariantForm';
 import { ProductVariant } from '../../data';
 
+interface PropsT {
+  onChange: (variants: ProductVariant[]) => void;
+  defaultVariants?: ProductVariant[];
+  previousImeis?: string[];
+  isEditPage?: boolean;
+}
+
 export default function MultipleVariants({
   onChange,
   defaultVariants,
-}: {
-  onChange: (variants: ProductVariant[]) => void;
-  defaultVariants?: ProductVariant[];
-}) {
+  previousImeis,
+  isEditPage,
+}: PropsT) {
   const [variants, setVariants] = useState<ProductVariant[]>([
     {
       uid: (Math.random() * 999).toString(),
@@ -31,5 +37,12 @@ export default function MultipleVariants({
     }
   }, [defaultVariants]);
 
-  return <VariantForm variants={variants} setVariants={setVariants} />;
+  return (
+    <VariantForm
+      isEditPage={isEditPage}
+      previousImeis={previousImeis}
+      variants={variants}
+      setVariants={setVariants}
+    />
+  );
 }

@@ -61,7 +61,7 @@ export default function SupplierHistoryInvoice() {
             </TableCell>
 
             <TableCell className="border-default border-l">
-              ৳ {history?.total_purchase_amount}
+              {history?.total_purchase_amount}
             </TableCell>
           </TableRow>
         </BasicTable>

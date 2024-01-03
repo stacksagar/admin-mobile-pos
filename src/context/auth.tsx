@@ -1,8 +1,9 @@
 import { createContext, useContext, useState } from 'react';
+import { UserT } from '../data';
 
 interface AuthContext {
   auth?: {
-    user?: User;
+    user?: UserT;
     access_token?: string;
     error?: string;
   };

@@ -2,7 +2,7 @@ import useBoolean from '../../hooks/state/useBoolean';
 import toast_async from '../../utils/toast_async';
 import Breadcrumb from '../../components/Breadcrumb';
 import MuiTable from '../../common/MaterialUi/Table/MuiTable';
-import productsTableCells from './supplierHistoriesTableCells';
+import supplierHistoriesTableCells from './supplierHistoriesTableCells';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { useQuery } from '@tanstack/react-query';
 import { SupplierHistoryT } from '../../data';
@@ -46,7 +46,7 @@ export default function Users() {
         <MuiTable
           onRefreshData={refetch}
           onDelete={onMultipleDelete}
-          tableCells={productsTableCells}
+          tableCells={supplierHistoriesTableCells}
           rows={data || []}
           loading={isLoading}
           tableTitle="Supplier Purchase Histories"

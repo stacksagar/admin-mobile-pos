@@ -6,27 +6,24 @@ import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { useAppDispatch } from '../../app/store';
-import {
-  addSupplier,
-  updateSupplier,
-} from '../../app/features/suppliers/supplierSlice';
+import { addSupplier } from '../../app/features/suppliers/supplierSlice';
 import { SupplierT } from '../../data';
 
 type Props = {
+  avoidCreateSupplier?: boolean;
   openModal?: UseBoolean;
   editItem?: SupplierT;
-  avoidUpdateToast?: boolean;
   _onSuccessAdd?: (supplier: SupplierT) => void;
   _finally?: () => void;
 
-  paid_amount: number;
-  due_amount: number;
+  paid_amount?: number;
+  due_amount?: number;
 };
 
 export default function useSupplierFormik({
   openModal,
   editItem,
-  avoidUpdateToast,
+  avoidCreateSupplier,
   _onSuccessAdd,
   _finally,
   paid_amount = 0,
@@ -50,11 +47,7 @@ export default function useSupplierFormik({
     onSubmit: async (values) => {
       formik.setSubmitting(true);
       try {
-        if (editItem?.id) {
-          const { data } = await axios.put(`/supplier/${editItem.id}`, values);
-          data && dispatch(updateSupplier(data));
-          !avoidUpdateToast && toast({ message: 'Supplier Updated!' });
-        } else {
+        if (!avoidCreateSupplier) {
           const { data } = await axios.post('/supplier', values);
           if (data) {
             dispatch(addSupplier(data));
