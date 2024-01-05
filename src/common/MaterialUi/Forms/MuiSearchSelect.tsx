@@ -12,6 +12,7 @@ type Props = {
   options: any[];
   titleKey: string;
 
+  secondTitleKey?: string;
   valueKey?: string;
 
   defaultValue?: any;
@@ -23,6 +24,7 @@ export default function MuiSearchSelect({
   label,
   options: providedOptions,
   titleKey,
+  secondTitleKey,
   valueKey,
   defaultValue: providedDefaultValue,
   defaultTitle,
@@ -55,7 +57,7 @@ export default function MuiSearchSelect({
       <Autocomplete
         options={options}
         value={defaultValue}
-        getOptionLabel={(option) => option}
+        getOptionLabel={(option: string) => option}
         renderInput={(params) => (
           <TextField {...params} label={label || 'Select'} margin="normal" />
         )}
@@ -71,7 +73,7 @@ export default function MuiSearchSelect({
           </li>
         }
         onChange={(_, val) => handleChange(val)}
-        renderOption={(props, option, { inputValue }) => {
+        renderOption={(props, option, { inputValue, selected }) => {
           const matches = match(option, inputValue, { insideWords: true });
           const parts = parse(option, matches);
 
@@ -88,6 +90,10 @@ export default function MuiSearchSelect({
                     {part.text}
                   </span>
                 ))}
+
+                {selected ? (
+                  <FIcon className="mx-2 text-green-600" icon="check-circle" />
+                ) : null}
               </div>
             </li>
           );

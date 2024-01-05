@@ -242,3 +242,20 @@ interface SettingT extends Common {
   };
   admin: {};
 }
+
+export interface BarcodeT extends Common {
+  with_multi?: boolean;
+  barcode?: string;
+  barcodes?: {
+    color: string;
+    imei: string;
+    ram: string;
+    rom: string;
+    processor: string;
+    price: number;
+  }[];
+
+  quantity?: number;
+  productId?: number;
+  product?: ProductT;
+}

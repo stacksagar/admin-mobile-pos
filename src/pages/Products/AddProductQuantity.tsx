@@ -12,7 +12,7 @@ import useNumber from '../../hooks/state/useNumber';
 import { Button } from '@mui/material';
 import useString from '../../hooks/state/useString';
 import { useAuth } from '../../context/auth';
-import AddSupplierPopup from '../Suppliers/AddSupplierPopup';
+import AddEditSupplierPopup from '../Suppliers/AddEditSupplierPopup';
 import toast from '../../libs/toast';
 import mergeVariants from '../../libs/algorithms/merge_variants';
 
@@ -205,7 +205,7 @@ export default function AddProductQuantity({}: PropsT) {
 
   return (
     <div className="grid grid-cols-12 gap-4">
-      <AddSupplierPopup openModal={showAddSupplierPopup} />
+      <AddEditSupplierPopup openModal={showAddSupplierPopup} />
 
       <div className="col-span-7 w-full space-y-4 bg-white p-4 shadow dark:bg-gray-900">
         <h4 className="text-xl font-medium text-black dark:text-white">

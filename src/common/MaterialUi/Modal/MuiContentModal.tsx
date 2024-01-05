@@ -13,9 +13,15 @@ interface Props {
   openModal: UseBoolean;
   title?: string;
   children?: React.ReactNode;
+  SubmitButton?: React.ReactNode;
 }
 
-export default function MuiContentModal({ openModal, title, children }: Props) {
+export default function MuiContentModal({
+  openModal,
+  title,
+  children,
+  SubmitButton,
+}: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -35,17 +41,21 @@ export default function MuiContentModal({ openModal, title, children }: Props) {
 
       {title ? <DialogTitle>{title}</DialogTitle> : null}
 
-      <DialogContent>
+      <DialogContent className="bg-gray-100">
         <div>{children}</div>
         <br />
-        <Button
-          variant="contained"
-          color="warning"
-          onClick={handleClose}
-          type="button"
-        >
-          Close
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleClose}
+            type="button"
+          >
+            Close
+          </Button>
+
+          {SubmitButton}
+        </div>
       </DialogContent>
     </Dialog>
   );

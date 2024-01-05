@@ -5,8 +5,6 @@ import { UseBoolean } from '../../hooks/state/useBoolean';
 import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch } from '../../app/store';
-import { addSupplier } from '../../app/features/suppliers/supplierSlice';
 import { SupplierT } from '../../data';
 
 type Props = {
@@ -30,7 +28,6 @@ export default function useSupplierFormik({
   due_amount = 0,
 }: Props) {
   const axios = useAxiosPrivate();
-  const dispatch = useAppDispatch();
   const formik = useFormik({
     initialValues: {
       id: null,
@@ -51,7 +48,6 @@ export default function useSupplierFormik({
         if (!avoidCreateSupplier) {
           const { data } = await axios.post('/supplier', values);
           if (data) {
-            dispatch(addSupplier(data));
             _onSuccessAdd && _onSuccessAdd(data);
             toast({ message: 'New Supplier Added!' });
           }

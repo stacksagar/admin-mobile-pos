@@ -30,6 +30,7 @@ export default function useCustomerFormik({
       email: '',
       address: '',
       phone: '',
+      password: '',
       due: 0,
       paid: 0,
       total_puchase_amount: 0,
@@ -61,16 +62,17 @@ export default function useCustomerFormik({
   });
 
   useEffect(() => {
-    formik.setValues({
-      name: editItem?.name || '',
-      email: editItem?.email || '',
-      address: editItem?.address || '',
-      phone: editItem?.phone || '',
-      due: editItem?.due || 0,
-      paid: editItem?.paid || 0,
-      total_puchase_amount: editItem?.total_puchase_amount || 0,
-      role: editItem?.role as any,
-    });
+    formik.setFieldValue('name', editItem?.name);
+    formik.setFieldValue('email', editItem?.email);
+    formik.setFieldValue('address', editItem?.address);
+    formik.setFieldValue('phone', editItem?.phone);
+    formik.setFieldValue('due', editItem?.due);
+    formik.setFieldValue('paid', editItem?.paid);
+    formik.setFieldValue(
+      'total_puchase_amount',
+      editItem?.total_puchase_amount
+    );
+    formik.setFieldValue('role', editItem?.role || 'user');
   }, [editItem]);
 
   return { formik };
@@ -79,19 +81,19 @@ export default function useCustomerFormik({
 export const CustomerForms = ({ formik }: { formik: any }) => (
   <div className="flex flex-col gap-6">
     <MuiTextField
-      label="Customer Name"
+      label="User Name"
       {...formik.getFieldProps('name')}
       touched={formik.touched.name}
       error={formik.errors.name}
     />
     <MuiTextField
-      label="Address"
+      label="Address (optional)"
       {...formik.getFieldProps('address')}
       touched={formik.touched.address}
       error={formik.errors.address}
     />
     <MuiTextField
-      label="Phone"
+      label="Phone (optional)"
       {...formik.getFieldProps('phone')}
       touched={formik.touched.phone}
       error={formik.errors.phone}
@@ -103,10 +105,18 @@ export const CustomerForms = ({ formik }: { formik: any }) => (
       error={formik.errors.email}
     />
 
+    <MuiTextField
+      label="Password"
+      {...formik.getFieldProps('password')}
+      touched={formik.touched.password}
+      error={formik.errors.password}
+    />
+
     <Select
       size="small"
       labelId="role"
       id="role"
+      value={formik.values.role}
       {...formik.getFieldProps('role')}
     >
       <MenuItem value="">

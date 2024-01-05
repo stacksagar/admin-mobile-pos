@@ -4,7 +4,6 @@ import POSInvoiceHeader from './POSInvoiceHeader';
 import POSInvoiceFooter from './POSInvoiceFooter';
 import { usePOSData } from '../../context/pos';
 import { uid } from 'uid';
-import { useEffect } from 'react';
 import { ProductT } from '../../data';
 
 export default function POSInvoice() {
@@ -18,10 +17,6 @@ export default function POSInvoice() {
     invoiceID,
     setInvoiceID,
   } = usePOSData();
-
-  useEffect(() => {
-    console.log('posProducts', posProducts);
-  }, [posProducts]);
 
   return (
     <div className="print_area mx-auto w-full rounded bg-white p-6 shadow-sm xl:max-w-screen-md">

@@ -196,8 +196,8 @@ input.rti--input {
 
 @media (min-width: 1023px) {
   .css-1ljcup0-MuiPaper-root-MuiDialog-paper {
-    max-width: 600px !important;
-    min-width: 600px !important;
-    width: 600px !important;
+    max-width: 800px !important;
+    min-width: 800px !important;
+    width: 800px !important;
   }
 }

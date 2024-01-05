@@ -21,6 +21,7 @@ interface Props {
   title?: string;
   children?: React.ReactNode;
   handleSubmit?: (e: any) => void;
+  submitWithButton?: boolean;
 }
 
 export default function MuiResponsiveDialog({
@@ -33,6 +34,7 @@ export default function MuiResponsiveDialog({
   title,
   children,
   handleSubmit,
+  submitWithButton,
 }: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -70,7 +72,10 @@ export default function MuiResponsiveDialog({
               variant="contained"
               color={submitColor}
               className="flex items-center gap-2"
-              type="submit"
+              onClick={() =>
+                submitWithButton ? handleSubmit && handleSubmit(null) : null
+              }
+              type={submitWithButton ? 'button' : 'submit'}
             >
               <span> {submitText || 'Submit'} </span>
               {loading ? <CircularProgress color="inherit" size={18} /> : null}

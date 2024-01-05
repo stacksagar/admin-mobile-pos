@@ -4,8 +4,7 @@ import { TypedUseSelectorHook, useSelector, useDispatch } from 'react-redux';
 import userSlice from './features/users/userSlice';
 
 import stockInProductsSlice from './features/products/stockInProductsSlice';
-import categorySlice from './features/products/categorySlice';
-import supplierSlice from './features/suppliers/supplierSlice';
+import categorySlice from './features/products/categorySlice'; 
 import brandSlice from './features/brands/brandSlice';
 import modelSlice from './features/models/modelSlice';
 import vatSlice from './features/vats/vatSlice';
@@ -23,8 +22,7 @@ import supplierHistories from './features/supplier-histories/supplierHistories';
 
 export const store = configureStore({
   reducer: {
-    users: userSlice.reducer,
-    suppliers: supplierSlice.reducer,
+    users: userSlice.reducer, 
     customers: customerSlice.reducer,
     products: stockInProductsSlice.reducer,
     stock_out_products: stockOutProductsSlice.reducer,

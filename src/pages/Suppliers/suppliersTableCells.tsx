@@ -1,20 +1,21 @@
 import { Button } from '@mui/material';
-import { UserT } from '../../data';
+import { SupplierT } from '../../data';
 import { useGlobalState } from '../../context/globalState';
 import FIcon from '../../common/Icons/FIcon';
 
-const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
+const customersTableCells: MuiTableHeader<SupplierT & { key: 'sl' }>[] = [
   {
     key: 'id',
     label: 'ID',
   },
 
   {
-    key: 'name',
+    key: 'supplier_name',
+
     RenderComponent({ row }) {
       return (
         <div className="flex flex-col gap-2">
-          <p> {row?.name} </p>
+          <p> {row?.supplier_name} </p>
           <p>
             {row?.email ? (
               <a href={`mailto:${row?.email}`} className="text-blue-500">
@@ -35,43 +36,54 @@ const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
   },
 
   {
+    key: 'address',
+  },
+  {
     key: 'total_puchase_amount',
-    label: 'Total / Paid / Due',
-    RenderComponent({ row }) {
-      return (
-        <div className="max-w-fit">
-          <p className="flex items-center justify-between gap-x-4">
-            <span> Total Purchase </span>{' '}
-            <span> = {row?.total_puchase_amount} </span>
-          </p>
-          <p className="flex items-center justify-between gap-x-4">
-            <span> Total Paid</span> <span> = {row?.paid} </span>
-          </p>
-          <p className="flex items-center justify-between gap-x-4">
-            <span> Total Due </span> <span> = {row?.due} </span>
-          </p>
-        </div>
-      );
-    },
+    label: 'Total Puchase Amount',
+  },
+  {
+    key: 'total_paid',
+    label: 'Total Paid',
+  },
+  {
+    key: 'total_due',
+    label: 'Total Due',
   },
 
   {
     key: 'actions',
     ActionButtons({ row }) {
-      const { showCustomerFormModal, setSelectedUser } = useGlobalState();
-
+      const {
+        showAddEditSupplierForm,
+        isShow,
+        setSelectedItem,
+        setSelectedID,
+      } = useGlobalState();
       return (
         <>
           <Button
-            onClick={() => {
-              showCustomerFormModal?.toggle();
-              setSelectedUser(row);
-            }}
             variant="contained"
             title="Edit"
             size="small"
+            onClick={() => {
+              showAddEditSupplierForm.setTrue();
+              setSelectedItem(row);
+            }}
           >
             Edit
+          </Button>
+          <Button
+            variant="contained"
+            title="View"
+            color="info"
+            size="small"
+            onClick={() => {
+              setSelectedID(row?.id);
+              isShow.setTrue();
+            }}
+          >
+            View
           </Button>
         </>
       );

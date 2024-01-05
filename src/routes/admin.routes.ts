@@ -29,10 +29,12 @@ const Vats = lazy(() => import('../pages/Vats/Vats'));
 const SalesAndReturn = lazy(
   () => import('../pages/SalesAndReturn/SalesAndReturn')
 );
+
 const Expenses = lazy(() => import('../pages/Expenses/Expenses'));
 const ExpensesCategories = lazy(
   () => import('../pages/ExpensesCategories/ExpensesCategories')
 );
+
 const Orders = lazy(() => import('../pages/Orders/Orders'));
 const Pages = lazy(() => import('../pages/Pages/Pages'));
 const AddEditPage = lazy(() => import('../pages/Pages/AddEditPage'));
@@ -51,6 +53,7 @@ const Warranties = lazy(() => import('../pages/Warranties/Warranties'));
 const ChangePassword = lazy(
   () => import('../pages/Authentication/ChangePassword')
 );
+const BarcodePrint = lazy(() => import('../pages/BarcodePrint/BarcodePrint'));
 
 const admin_pages = {
   '': Dashboard,
@@ -81,6 +84,7 @@ const admin_pages = {
   'change-password': ChangePassword,
   settings: Settings,
   warranties: Warranties,
+  'barcode-print': BarcodePrint,
 };
 
 export default admin_pages;
