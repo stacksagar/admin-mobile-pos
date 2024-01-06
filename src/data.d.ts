@@ -248,9 +248,9 @@ export interface BarcodeT extends Common {
   barcode?: string;
   barcodes?: {
     color: string;
-    imei: string;
     ram: string;
     rom: string;
+    imei: string;
     processor: string;
     price: number;
   }[];

@@ -1,4 +1,4 @@
-import { usePOSData } from '../../context/pos';
+import { usePOSData } from '../../context/pos/pos';
 import { useSetting } from '../../context/setting';
 import { showDate } from '../../utils/date';
 

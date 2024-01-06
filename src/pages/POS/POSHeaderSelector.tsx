@@ -1,7 +1,3 @@
-import { usePOSData } from '../../context/pos';
-import { useAppSelector } from '../../app/store';
-import useFetchDispatch from '../../hooks/redux/useFetchDispatch';
-import { fetchStockInProducts } from '../../app/features/products/requests';
 import { IconButton } from '@mui/material';
 import FIcon from '../../common/Icons/FIcon';
 import AddCustomerPopup from '../Customers/AddCustomerPopup';
@@ -10,40 +6,55 @@ import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import { useState } from 'react';
-import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useQuery } from '@tanstack/react-query';
-import { UserT } from '../../data';
+import { ProductT } from '../../data';
+import useCustomers from '../../hooks/react-query/useCustomers';
+import useProducts from '../../hooks/react-query/useProducts';
+import { usePOS } from '../../context/pos/pos';
+import { POSProductT } from '../../context/pos/POSContext';
+import useObject from '../../hooks/state/useObject';
 
 interface Props {}
 
 export default function POSHeaderSelector({}: Props) {
-  const axios = useAxiosPrivate();
+  const { customer, products: pos_products } = usePOS();
 
-  const { data: products } = useAppSelector((s) => s.products);
+  const { customers } = useCustomers();
+  const { products } = useProducts();
 
-  const { data: customers } = useQuery<UserT[]>(
-    ['fetchCustomers'],
-    async () => {
-      const { data } = await axios.get(`/customer/all`);
-      return data || [];
-    }
-  );
-
-  useFetchDispatch({
-    data: products,
-    fetchFunc: fetchStockInProducts,
-  });
+  const selectedProduct = useObject({} as ProductT);
 
   const openAddCustomerPopup = useBoolean();
-  const { setPOSProduct, customer, setCustomer } = usePOSData();
 
   const [barcode, setBarcode] = useState('');
+
   function handleWithScan(code: string) {
     setBarcode(code);
     const product = products.find((p) => p.barcode?.trim() === code?.trim());
     if (product?.id) {
-      setPOSProduct(product);
       setBarcode('');
+    }
+  }
+
+  function handleSelectProduct(product: ProductT) {
+    selectedProduct.set(product);
+    if (!product?.with_variant) {
+      addWithoutVariantProduct(product);
+    }
+  }
+
+  function addWithoutVariantProduct(product: ProductT) {
+    const exist = pos_products?.data?.find((p) => p?.id === product?.id);
+
+    const payable: POSProductT = {
+      ...product,
+      price: product.sale_price,
+      quantity: 1,
+      total_price: product.sale_price,
+    };
+
+    if (exist) {
+    } else {
+      pos_products.add(payable);
     }
   }
 
@@ -65,7 +76,7 @@ export default function POSHeaderSelector({}: Props) {
             uid: `${p.name} (${p?.barcode})`,
           }))}
           titleKey="uid"
-          onChange={setPOSProduct}
+          onChange={handleSelectProduct}
         />
 
         <Link to="/add-product">
@@ -77,12 +88,13 @@ export default function POSHeaderSelector({}: Props) {
 
       <div className="flex items-center gap-2">
         <AddCustomerPopup openModal={openAddCustomerPopup} />
+
         <MuiSearchSelect
-          label={customer?.name ? 'Customer' : 'Select Customer'}
-          defaultTitle={customer?.name || null}
+          label={'Select Customer'}
+          defaultTitle={customer?.data?.name || null}
           options={customers || []}
           titleKey="name"
-          onChange={setCustomer}
+          onChange={customer.set}
         />
 
         <IconButton onClick={openAddCustomerPopup.setTrue}>

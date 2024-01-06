@@ -1,13 +1,11 @@
-import POSProducts from './POSProducts';
-import POSHeaderSelector from './POSHeaderSelector';
-import POSDetailsTable from './POSDetailsTable';
 import POSFooter from './POSFooter';
-import { usePOSData } from '../../context/pos';
 import BasicTable from '../../common/MaterialUi/Table/BasicTable';
 import { TableCell, TableRow } from '@mui/material';
+import POSDetailsTable from './POSDetailsTable';
+import POSHeaderSelector from './POSHeaderSelector';
+import POSProducts from './POSProducts';
 
 export default function POS() {
-  const { customer, warranty, method } = usePOSData();
   return (
     <div className="space-y-2 md:bg-white md:p-8 md:dark:bg-black">
       <POSHeaderSelector />
@@ -19,32 +17,32 @@ export default function POS() {
               <TableCell>
                 <b>Name</b>
               </TableCell>
-              <TableCell>{customer?.name}</TableCell>
+              <TableCell>customer?.name</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Address</b>
               </TableCell>
-              <TableCell>{customer?.address}</TableCell>
+              <TableCell>customer?.address</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Phone</b>
               </TableCell>
-              <TableCell>{customer?.phone}</TableCell>
+              <TableCell>customer?.phone</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Email</b>
               </TableCell>
-              <TableCell>{customer?.email}</TableCell>
+              <TableCell>customer?.email</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b className="text-lg">Customer Due</b>
               </TableCell>
               <TableCell>
-                <span className="text-base">{customer?.due}</span>
+                <span className="text-base">customer?.due</span>
               </TableCell>
             </TableRow>
 
@@ -52,13 +50,13 @@ export default function POS() {
               <TableCell>
                 <b>Warranty</b>
               </TableCell>
-              <TableCell>{warranty?.name}</TableCell>
+              <TableCell>warranty?.name</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Payment Method</b>
               </TableCell>
-              <TableCell>{method?.name}</TableCell>
+              <TableCell>method?.name</TableCell>
             </TableRow>
           </BasicTable>
         </div>

@@ -1,12 +1,12 @@
-export function getQuantity(products: PosProduct[]): number {
+export function getQuantity(products: any[]): number {
   return products?.reduce((total, product) => total + product?.quantity, 0);
 }
 
-export function getSubTotal(products: PosProduct[]): number {
+export function getSubTotal(products: any[]): number {
   return products?.reduce((total, product) => total + product?.total_price, 0);
 }
 
-export function getDiscount(total: number, discount: Discount) {
+export function getDiscount(total: number, discount: any) {
   const isByPercentage = discount?.type === 'percentage';
   if (isByPercentage) {
     return (total / 100) * discount?.value;
@@ -15,7 +15,7 @@ export function getDiscount(total: number, discount: Discount) {
   }
 }
 
-export function getVat(total: number, vat: Vat) {
+export function getVat(total: number, vat: any) {
   const isByPercentage = vat?.type === 'percentage';
   if (isByPercentage) {
     return (total / 100) * vat?.value;

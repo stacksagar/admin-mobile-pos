@@ -10,7 +10,7 @@ import capitalize from '../../utils/capitalize';
 import { uid } from 'uid';
 import MuiSelect from '../../common/MaterialUi/Forms/MuiSelect';
 import FIcon from '../../common/Icons/FIcon';
-import { usePOSData } from '../../context/pos';
+import { usePOSData } from '../../context/pos/pos';
 import { Link } from 'react-router-dom';
 import { addSale } from '../../app/features/sales/salesSlice';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
@@ -239,7 +239,6 @@ const ordersTableCells: MuiTableHeader<Order>[] = [
 
                   setSaleDataToPOS(demoSaleData);
                 }}
-                
                 variant="contained"
                 size="small"
                 color="warning"

@@ -16,6 +16,6 @@ const useObject = <T>(defaultData?: T) => {
   };
 };
 
-export type UseObject = ReturnType<typeof useObject>;
+export type UseObject<T> = ReturnType<typeof useObject<T>>;
 
 export default useObject;

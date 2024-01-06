@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import FIcon from '../../common/Icons/FIcon';
 import { Link } from 'react-router-dom';
-import { usePOSData } from '../../context/pos';
+import { usePOSData } from '../../context/pos/pos';
 import { useSetting } from '../../context/setting';
 
 export default function POSInvoiceFooter({

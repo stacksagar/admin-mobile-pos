@@ -14,7 +14,7 @@ import MuiConfirmationDialog from '../../common/MaterialUi/Modal/MuiConfirmation
 import { removeSale, removeSales } from '../../app/features/sales/salesSlice';
 import { useState } from 'react';
 import { showDate } from '../../utils/date';
-import { usePOSData } from '../../context/pos';
+import { usePOSData } from '../../context/pos/pos';
 import { Link } from 'react-router-dom';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { updateProduct } from '../../app/features/products/stockInProductsSlice';

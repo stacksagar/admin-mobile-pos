@@ -2,7 +2,7 @@ import { TableCell, TableRow } from '@mui/material';
 import BasicTable from '../../common/MaterialUi/Table/BasicTable';
 import POSInvoiceHeader from './POSInvoiceHeader';
 import POSInvoiceFooter from './POSInvoiceFooter';
-import { usePOSData } from '../../context/pos';
+import { usePOSData } from '../../context/pos/pos';
 import { uid } from 'uid';
 import { ProductT } from '../../data';
 

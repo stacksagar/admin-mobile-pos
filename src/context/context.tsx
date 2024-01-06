@@ -1,7 +1,7 @@
 import { AuthProvider } from './auth';
 import { DashboardProvider } from './dashboard';
 import { GlobalStateProvider } from './globalState';
-import { POSProvider } from './pos';
+import { POSProvider } from './pos/pos';
 import { SettingProvider } from './setting';
 import { ThemeProvider } from './theme';
 
