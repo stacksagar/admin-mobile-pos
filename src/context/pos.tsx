@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import useNumber, { UseNumber } from '../hooks/state/useNumber';
 
+export interface POSProduct {}
+
 import {
   getDiscount,
   getQuantity,
