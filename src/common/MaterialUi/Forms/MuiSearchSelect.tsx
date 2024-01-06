@@ -12,7 +12,6 @@ type Props = {
   options: any[];
   titleKey: string;
 
-  secondTitleKey?: string;
   valueKey?: string;
 
   defaultValue?: any;
@@ -24,7 +23,6 @@ export default function MuiSearchSelect({
   label,
   options: providedOptions,
   titleKey,
-  secondTitleKey,
   valueKey,
   defaultValue: providedDefaultValue,
   defaultTitle,

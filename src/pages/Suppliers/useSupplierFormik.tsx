@@ -45,7 +45,7 @@ export default function useSupplierFormik({
     onSubmit: async (values) => {
       formik.setSubmitting(true);
       try {
-        if (!avoidCreateSupplier) {
+        if (!avoidCreateSupplier && !editItem?.id) {
           const { data } = await axios.post('/supplier', values);
           if (data) {
             _onSuccessAdd && _onSuccessAdd(data);

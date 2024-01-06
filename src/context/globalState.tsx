@@ -6,16 +6,15 @@ interface GlobalState {}
 
 interface Context {
   isShow: UseBoolean;
+  isShow2: UseBoolean;
   showCustomerFormModal: UseBoolean;
   showUserFormModal: UseBoolean;
-  showAddEditSupplierForm: UseBoolean;
   selectedUser: UserT;
   setSelectedUser: React.Dispatch<React.SetStateAction<UserT>>;
   globalState: GlobalState;
   setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
   selectedID: any;
   setSelectedID: React.Dispatch<React.SetStateAction<any>>;
-
   selectedItem: any;
   setSelectedItem: React.Dispatch<any>;
 }
@@ -25,19 +24,20 @@ const GlobalContext = createContext<Context>({} as Context);
 export function GlobalStateProvider({ children }: any) {
   const [globalState, setGlobalState] = useState<GlobalState>({});
   const [selectedUser, setSelectedUser] = useState({} as UserT);
-
-  const isShow = useBoolean();
   const showCustomerFormModal = useBoolean();
   const showUserFormModal = useBoolean();
-  const showAddEditSupplierForm = useBoolean();
-  const [selectedID, setSelectedID] = useState<any>();
 
+  // use for any
+  const isShow = useBoolean();
+  const isShow2 = useBoolean();
+  const [selectedID, setSelectedID] = useState<any>();
   const [selectedItem, setSelectedItem] = useState({} as any);
 
   return (
     <GlobalContext.Provider
       value={{
         isShow,
+        isShow2,
 
         selectedItem,
         setSelectedItem,
@@ -49,7 +49,6 @@ export function GlobalStateProvider({ children }: any) {
         selectedUser,
         setSelectedUser,
 
-        showAddEditSupplierForm,
         selectedID,
         setSelectedID,
       }}

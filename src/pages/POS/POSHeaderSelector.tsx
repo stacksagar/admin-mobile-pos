@@ -2,7 +2,6 @@ import { usePOSData } from '../../context/pos';
 import { useAppSelector } from '../../app/store';
 import useFetchDispatch from '../../hooks/redux/useFetchDispatch';
 import { fetchStockInProducts } from '../../app/features/products/requests';
-import { fetchCustomers } from '../../app/features/customers/requests';
 import { IconButton } from '@mui/material';
 import FIcon from '../../common/Icons/FIcon';
 import AddCustomerPopup from '../Customers/AddCustomerPopup';
@@ -11,21 +10,28 @@ import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import { useState } from 'react';
+import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import { useQuery } from '@tanstack/react-query';
+import { UserT } from '../../data';
 
 interface Props {}
 
 export default function POSHeaderSelector({}: Props) {
+  const axios = useAxiosPrivate();
+
   const { data: products } = useAppSelector((s) => s.products);
-  const { data: customers } = useAppSelector((s) => s.customers);
+
+  const { data: customers } = useQuery<UserT[]>(
+    ['fetchCustomers'],
+    async () => {
+      const { data } = await axios.get(`/customer/all`);
+      return data || [];
+    }
+  );
 
   useFetchDispatch({
     data: products,
     fetchFunc: fetchStockInProducts,
-  });
-
-  useFetchDispatch({
-    data: customers,
-    fetchFunc: fetchCustomers,
   });
 
   const openAddCustomerPopup = useBoolean();
@@ -74,7 +80,7 @@ export default function POSHeaderSelector({}: Props) {
         <MuiSearchSelect
           label={customer?.name ? 'Customer' : 'Select Customer'}
           defaultTitle={customer?.name || null}
-          options={customers}
+          options={customers || []}
           titleKey="name"
           onChange={setCustomer}
         />

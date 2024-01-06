@@ -126,7 +126,6 @@ export default function AddBarcodeModal({ openModal, onSuccess }: Props) {
 
     const lists = variants?.map((v, index) => ({
       index,
-
       title: `${v?.rom}-${v?.ram} ~ (${v?.processor})`,
       price: v.sale_price,
       ram: v.ram,
@@ -213,17 +212,17 @@ export default function AddBarcodeModal({ openModal, onSuccess }: Props) {
             <br />
             <div>
               <h2 className="text-lg">
-                {' '}
-                Items: <small>(IMEI/RAM-ROM)</small>{' '}
+                Items: <small>(IMEI/RAM-ROM/Price)</small>
               </h2>
               <div className="flex flex-wrap items-center gap-6">
                 {barcodes?.map((item) => (
-                  <div className="flex items-center gap-2">
-                    <p>
-                      <span>{item?.imei} </span>
+                  <div key={item.imei} className="flex items-center gap-2">
+                    <p className="space-x-1">
+                      <span>IIMEI:{item?.imei} </span>
                       <b>
                         ({item?.ram}/{item?.rom})
                       </b>
+                      <span>({item?.price})</span>
                     </p>
                     <IconButton
                       onClick={() =>

@@ -6,7 +6,7 @@ import usersTableCells from './suppliersTableCells';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { useQuery } from '@tanstack/react-query';
 import { useGlobalState } from '../../context/globalState';
-import AddEditUserPopup from './AddEditSupplierPopup';
+import AddEditSupplierPopup from './AddEditSupplierPopup';
 import { useEffect } from 'react';
 import { Button } from '@mui/material';
 import { SupplierT } from '../../data';
@@ -14,13 +14,8 @@ import SupplierHistories from './SupplierHistories';
 import MuiContentModal from '../../common/MaterialUi/Modal/MuiContentModal';
 
 export default function Users() {
-  const {
-    selectedItem,
-    setSelectedItem,
-    selectedID,
-    isShow,
-    showAddEditSupplierForm,
-  } = useGlobalState();
+  const { selectedItem, setSelectedItem, selectedID, isShow, isShow2 } =
+    useGlobalState();
   const axios = useAxiosPrivate();
 
   const { data, refetch, isLoading } = useQuery<SupplierT[]>(
@@ -52,7 +47,7 @@ export default function Users() {
 
   useEffect(() => {
     refetch();
-  }, [showAddEditSupplierForm]);
+  }, [isShow2]);
 
   useEffect(() => {
     console.log('selectedItem ', selectedItem);
@@ -60,10 +55,7 @@ export default function Users() {
 
   return (
     <div>
-      <AddEditUserPopup
-        openModal={showAddEditSupplierForm}
-        editItem={selectedItem}
-      />
+      <AddEditSupplierPopup openModal={isShow2} editItem={selectedItem} />
 
       <br />
 
@@ -85,7 +77,7 @@ export default function Users() {
           CustomButton={
             <Button
               onClick={() => {
-                showAddEditSupplierForm?.toggle();
+                isShow2?.toggle();
                 setSelectedItem({});
               }}
               variant="contained"

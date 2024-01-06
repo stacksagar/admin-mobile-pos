@@ -54,12 +54,8 @@ const customersTableCells: MuiTableHeader<SupplierT & { key: 'sl' }>[] = [
   {
     key: 'actions',
     ActionButtons({ row }) {
-      const {
-        showAddEditSupplierForm,
-        isShow,
-        setSelectedItem,
-        setSelectedID,
-      } = useGlobalState();
+      const { isShow2, isShow, setSelectedItem, setSelectedID } =
+        useGlobalState();
       return (
         <>
           <Button
@@ -67,7 +63,7 @@ const customersTableCells: MuiTableHeader<SupplierT & { key: 'sl' }>[] = [
             title="Edit"
             size="small"
             onClick={() => {
-              showAddEditSupplierForm.setTrue();
+              isShow2.setTrue();
               setSelectedItem(row);
             }}
           >

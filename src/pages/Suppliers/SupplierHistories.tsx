@@ -3,6 +3,8 @@ import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { SupplierHistoryT } from '../../data';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
+import { useEffect } from 'react';
+import DefaultSketelon from '../../common/Skeletons/DefaultSketelon';
 
 interface PropsT {
   supplierID: any;
@@ -10,7 +12,7 @@ interface PropsT {
 
 export default function SupplierHistories({ supplierID }: PropsT) {
   const axiosPrivate = useAxiosPrivate();
-  const { data } = useQuery<SupplierHistoryT[]>(
+  const { data, isLoading } = useQuery<SupplierHistoryT[]>(
     ['fetchSupplierHistory'],
     async () => {
       const { data } = await axiosPrivate.get(
@@ -19,6 +21,19 @@ export default function SupplierHistories({ supplierID }: PropsT) {
       return data || [];
     }
   );
+
+  useEffect(() => {
+    console.log('supplierID ', supplierID);
+  }, [supplierID]);
+
+  if (isLoading)
+    return (
+      <div className="py-2">
+        <DefaultSketelon />
+      </div>
+    );
+
+  if (data?.length === 0) return <div className="py-2">Empty!</div>;
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:min-w-[550px]">

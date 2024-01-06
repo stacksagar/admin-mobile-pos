@@ -8,7 +8,7 @@ interface Props {
   editItem?: UserT;
 }
 
-export default function AddSupplierPopup({ openModal, editItem }: Props) {
+export default function AddEditSupplierPopup({ openModal, editItem }: Props) {
   const { formik } = useSupplierFormik({ openModal, editItem });
 
   return (
