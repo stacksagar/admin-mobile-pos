@@ -3,6 +3,7 @@ import BasicTable from '../../common/MaterialUi/Table/BasicTable';
 
 export default function POSDetailsTable() {
   return (
+    
     <BasicTable>
       <TableRow>
         <TableCell>

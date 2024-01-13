@@ -11,7 +11,7 @@ interface Props
     | React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
     | undefined;
 
-  handleSubmit?: (id: any, data: any) => void;
+  handleSubmit?: (id: number, data: object) => void;
   max?: number;
   keyName: string;
 }
@@ -42,7 +42,9 @@ export default function ChangeNumberField({
           label={keyName?.split('_').join(' ')}
           variant="standard"
           size="small"
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) =>
+            Number(e.target.value) > 0 && setValue(e.target.value)
+          }
           {...props}
         />
       </div>

@@ -4,8 +4,10 @@ import { TableCell, TableRow } from '@mui/material';
 import POSDetailsTable from './POSDetailsTable';
 import POSHeaderSelector from './POSHeaderSelector';
 import POSProducts from './POSProducts';
+import { usePOS } from '../../context/pos/pos';
 
 export default function POS() {
+  const { customer } = usePOS();
   return (
     <div className="space-y-2 md:bg-white md:p-8 md:dark:bg-black">
       <POSHeaderSelector />
@@ -17,32 +19,32 @@ export default function POS() {
               <TableCell>
                 <b>Name</b>
               </TableCell>
-              <TableCell>customer?.name</TableCell>
+              <TableCell>{customer?.data?.name}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Address</b>
               </TableCell>
-              <TableCell>customer?.address</TableCell>
+              <TableCell>{customer?.data?.address}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Phone</b>
               </TableCell>
-              <TableCell>customer?.phone</TableCell>
+              <TableCell>{customer?.data?.phone}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Email</b>
               </TableCell>
-              <TableCell>customer?.email</TableCell>
+              <TableCell>{customer?.data?.email}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b className="text-lg">Customer Due</b>
               </TableCell>
               <TableCell>
-                <span className="text-base">customer?.due</span>
+                <span className="text-base">{customer?.data?.due}</span>
               </TableCell>
             </TableRow>
 
@@ -50,13 +52,13 @@ export default function POS() {
               <TableCell>
                 <b>Warranty</b>
               </TableCell>
-              <TableCell>warranty?.name</TableCell>
+              <TableCell>{}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
                 <b>Payment Method</b>
               </TableCell>
-              <TableCell>method?.name</TableCell>
+              <TableCell>{}</TableCell>
             </TableRow>
           </BasicTable>
         </div>

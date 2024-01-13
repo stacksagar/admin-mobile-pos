@@ -5,14 +5,12 @@ import useBoolean from '../../hooks/state/useBoolean';
 import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProductT } from '../../data';
 import useCustomers from '../../hooks/react-query/useCustomers';
 import useProducts from '../../hooks/react-query/useProducts';
-import { usePOS } from '../../context/pos/pos';
-import { POSProductT } from '../../context/pos/POSContext';
+import { usePOS } from '../../context/pos/pos'; 
 import useObject from '../../hooks/state/useObject';
-
 interface Props {}
 
 export default function POSHeaderSelector({}: Props) {
@@ -45,18 +43,29 @@ export default function POSHeaderSelector({}: Props) {
   function addWithoutVariantProduct(product: ProductT) {
     const exist = pos_products?.data?.find((p) => p?.id === product?.id);
 
-    const payable: POSProductT = {
-      ...product,
-      price: product.sale_price,
-      quantity: 1,
-      total_price: product.sale_price,
-    };
-
     if (exist) {
+      const quantity = (exist?.quantity || 0) + 1;
+      const newData = {
+        ...exist,
+        quantity,
+        total_price: exist?.sale_price * quantity,
+        price: exist?.sale_price,
+      };
+
+      pos_products.update(newData, 'id');
     } else {
-      pos_products.add(payable);
+      pos_products.add({
+        ...product,
+        price: product.sale_price,
+        quantity: 1,
+        total_price: product.sale_price,
+      });
     }
   }
+
+  useEffect(() => {
+    console.log('pos_products ', pos_products);
+  }, [pos_products]);
 
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:gap-6 xl:gap-12">

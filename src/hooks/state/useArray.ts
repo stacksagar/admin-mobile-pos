@@ -10,16 +10,17 @@ const useArray = <T>(defaultData?: T[]) => {
     reset: () => setData([]),
     set: setData,
     add: (d: T) => setData((prev) => [...prev, d]),
-
     update: (newObject: T, key: keyof T) =>
       setData((prev) =>
         prev.map((item) => (item[key] === newObject[key] ? newObject : item))
       ),
+
+    remove: (id: number) =>
+      setData((prev) => prev.filter((item: any) => item?.id !== id)),
 
     loading,
   };
 };
 
 export type UseArray<T> = ReturnType<typeof useArray<T>>;
-
 export default useArray;
