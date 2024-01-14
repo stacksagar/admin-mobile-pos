@@ -65,9 +65,11 @@ export default function POSInvoice() {
         </BasicTable>
         <BasicTable size="small">
           <TableRow>
-            <TableCell> SUBTOTAL </TableCell>
+            <TableCell> TOTAL PRICE </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>{sub_total_amount.value || 0}</TableCell>
+            <TableCell>
+              {sub_total_amount.value - vat_amount?.value || 0}
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell> VAT </TableCell>
@@ -79,11 +81,13 @@ export default function POSInvoice() {
             <TableCell> = </TableCell>
             <TableCell>{discount_amount.value || 0}</TableCell>
           </TableRow>
+
           <TableRow>
             <TableCell> TOTAL </TableCell>
             <TableCell> = </TableCell>
             <TableCell>{payable_amount.value || 0}</TableCell>
           </TableRow>
+
           <TableRow>
             <TableCell> Payment </TableCell>
             <TableCell> = </TableCell>
