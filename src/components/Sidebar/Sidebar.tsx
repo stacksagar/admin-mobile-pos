@@ -77,7 +77,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <SidebarItem to="/" title="Dashboard" CustomIcon={<GridSvg />} />
 
             <SidebarItem to="/pos" title="Sale Create POS" icon="p" />
-            <SidebarItem to="/sales-and-return" title="Sales" icon="file" />
+            <SidebarItem to="/sales" title="Sales" icon="file" />
 
             <SidebarItemGroup
               title="Suppliers"

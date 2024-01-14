@@ -1,59 +1,46 @@
-import { useAppDispatch, useAppSelector } from '../../app/store';
 import MaterialTableServer from '../../common/MaterialUi/Table/MaterialTableServer';
-import { fetchSales } from '../../app/features/sales/requests';
 import { GridColDef } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import useTableSelectAll from '../../hooks/table/useTableSelectAll';
-import useFetchWithPagination from '../../hooks/redux/useFetchWithPagination';
 import Breadcrumb from '../../components/Breadcrumb';
 import useBoolean from '../../hooks/state/useBoolean';
 import toast from '../../libs/toast';
 import error_message from '../../utils/error_message';
 import { axios_private } from '../../api/api';
 import MuiConfirmationDialog from '../../common/MaterialUi/Modal/MuiConfirmationDialog';
-import { removeSale, removeSales } from '../../app/features/sales/salesSlice';
 import { useState } from 'react';
 import { showDate } from '../../utils/date';
-import { usePOSData } from '../../context/pos/pos';
 import { Link } from 'react-router-dom';
-import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { updateProduct } from '../../app/features/products/stockInProductsSlice';
-import makeToSerialize from '../../utils/makeToSerialize';
+import useSales from '../../hooks/react-query/useSales';
+import { SaleT, UserT } from '../../data';
+import { usePOS } from '../../context/pos/pos';
+import { POSProductT } from '../../context/pos/POSContext';
 
 export default function Sales() {
-  const axios = useAxiosPrivate();
-  const { setSaleDataToPOS } = usePOSData();
-  const dispatch = useAppDispatch();
-  const {
-    data: sales,
-    limit,
-    currentPage,
-    totalItems,
-    totalPages,
-    loading,
-  } = useAppSelector((s) => s.sales);
-
-  const { changePage } = useFetchWithPagination({
-    data: [],
-    fetchFunc: fetchSales,
-  });
+  const { sales, refetchSales, fetchingSales } = useSales();
 
   const { selectedIds, onChangeSelected } = useTableSelectAll();
   const [selectedID, setSelectedID] = useState<any>();
+
+  const {
+    customer,
+    vat_amount,
+    discount_amount,
+    payable_amount,
+    products,
+    paid,
+  } = usePOS();
 
   const showSelectedDeletePopup = useBoolean();
   const selectedDeleting = useBoolean();
 
   async function deleteMultipleItems() {
     selectedDeleting.setTrue();
+
     try {
       await axios_private.delete('/sale/delete-multiples', {
         data: { ids: selectedID || selectedIds },
       });
-
-      selectedID
-        ? dispatch(removeSale(selectedID))
-        : dispatch(removeSales(selectedIds));
 
       toast({ message: 'Successfully Deleted!' });
     } catch (error) {
@@ -63,32 +50,15 @@ export default function Sales() {
     } finally {
       showSelectedDeletePopup.setFalse();
       selectedDeleting.setFalse();
+      refetchSales();
     }
   }
 
-  const [sale, setSale] = useState({} as Sale);
+  const [sale, setSale] = useState({} as SaleT);
   const refunding = useBoolean();
   const showRefundPopup = useBoolean();
   async function handleRefund() {
     try {
-      const { data: getData } = await axios.get(
-        `/product/${sale?.product?.id}`
-      );
-      const product: Product = getData?.product;
-      if (!product) return;
-
-      const { data: putData } = await axios.put(
-        `/product/${sale?.product?.id}`,
-        {
-          total_sale: (product?.total_sale || 0) - sale?.product?.quantity,
-          in_stock: (product?.in_stock || 0) + sale?.product?.quantity,
-        }
-      );
-      putData?.product && dispatch(updateProduct(putData?.product));
-
-      await axios.delete(`/sale/${sale?.id}`);
-
-      dispatch(removeSale(sale?.id));
       toast({
         message: 'Refund successfull!',
       });
@@ -100,6 +70,20 @@ export default function Sales() {
     } finally {
       showRefundPopup.setFalse();
     }
+  }
+
+  function handleInvoice(sale: SaleT) {
+    customer.set(sale.customer as UserT);
+    vat_amount.set(sale.vat);
+    discount_amount.set(sale.discount);
+    payable_amount.set(sale.total);
+    paid.setCustom(sale.paid?.toString());
+    products.add({
+      ...sale.product,
+      price: sale?.product?.sale_price,
+      quantity: sale?.quantity,
+      total_price: sale?.total,
+    } as POSProductT);
   }
 
   const columns: GridColDef[] = [
@@ -165,11 +149,11 @@ export default function Sales() {
       },
     },
     {
-      field: 'warranty',
-      headerName: 'Warranty',
+      field: 'total',
+      headerName: 'Total Price',
       width: 110,
       renderCell(params) {
-        return <div> {params?.row?.warranty?.name} </div>;
+        return <div> {params?.row?.total} </div>;
       },
     },
     {
@@ -187,9 +171,7 @@ export default function Sales() {
                 title="View Invoice"
                 variant="contained"
                 size="small"
-                onClick={() => {
-                  setSaleDataToPOS(params.row);
-                }}
+                onClick={() => handleInvoice(params?.row)}
               >
                 Invoice
               </Button>
@@ -260,25 +242,17 @@ export default function Sales() {
 
       <MaterialTableServer
         // -- data
-        data={makeToSerialize(sales, currentPage, limit)}
+        data={sales}
         filterKeys={['name', 'email']}
         columns={columns}
         onChangeSelected={onChangeSelected}
         // -- pagination options
-        totalItems={totalItems}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        changePage={changePage}
-        limit={limit}
-        loading={loading}
-        // -- buttons/handlers
-        // addNewText={'Add New Sale'}
-        // addNewHandler={() => {
-        //   showAddSalePopup.setTrue();
-        // }}
-        // filterHandler={() => {}}
-        // downloadHandler={() => {}}
-
+        totalItems={0}
+        totalPages={0}
+        currentPage={0}
+        changePage={() => {}}
+        limit={0}
+        loading={fetchingSales}
         multipleDeleteHandler={() => {
           setSelectedID(null);
           showSelectedDeletePopup.setTrue();

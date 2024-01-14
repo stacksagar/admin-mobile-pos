@@ -5,16 +5,14 @@ import { UseBoolean } from '../../hooks/state/useBoolean';
 import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch } from '../../app/store';
-import { addVat, updateVat } from '../../app/features/vats/vatSlice';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import formik_dynamic_fields_required from '../../validations/formik/formik_dynamic_fields_required';
+import { VatT } from '../../data';
 
 type Props = {
   openModal?: UseBoolean;
-  editItem?: Vat;
+  editItem?: VatT;
   avoidUpdateToast?: boolean;
-  _onSuccessAdd?: (vat: Vat) => void;
   _finally?: () => void;
 };
 
@@ -22,11 +20,10 @@ export default function useVatFormik({
   openModal,
   editItem,
   avoidUpdateToast,
-  _onSuccessAdd,
   _finally,
 }: Props) {
   const axios = useAxiosPrivate();
-  const dispatch = useAppDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -40,16 +37,11 @@ export default function useVatFormik({
       formik.setSubmitting(true);
       try {
         if (editItem?.id) {
-          const { data } = await axios.put(`/vat/${editItem.id}`, values);
-          data?.vat && dispatch(updateVat(data?.vat));
+          await axios.put(`/vat/${editItem.id}`, values);
           !avoidUpdateToast && toast({ message: 'Vat Updated!' });
         } else {
           const { data } = await axios.post('/vat', values);
-          if (data?.vat) {
-            dispatch(addVat(data?.vat));
-            _onSuccessAdd && _onSuccessAdd(data?.vat);
-            toast({ message: 'New Vat Added!' });
-          }
+          if (data) toast({ message: 'New Vat Added!' });
         }
       } catch (error) {
         toast({

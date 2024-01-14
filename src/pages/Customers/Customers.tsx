@@ -54,7 +54,7 @@ export default function Customers() {
         openModal={showCustomerFormModal}
       />
 
-      <Breadcrumb pageName="Purchased Histories" />
+      <Breadcrumb pageName="Customers" />
       <br />
 
       <div className="max-w-full overflow-hidden">
@@ -64,7 +64,7 @@ export default function Customers() {
           tableCells={customersTableCells}
           rows={data || []}
           loading={isLoading}
-          tableTitle="Supplier Purchase Histories"
+          tableTitle="Customers"
           deleting={deleting}
           CustomButton={
             <Button

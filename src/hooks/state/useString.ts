@@ -9,6 +9,8 @@ const useString = <T>(defaultValue?: T) => {
     value,
     reset: () => setValue('' as T),
     change: (e: any) => setValue(e.target.value),
+    changeOnlyNumber: (e: any) =>
+      isNaN(e?.target?.value) ? setValue('' as any) : setValue(e.target.value),
     setCustom: (val?: T) => setValue(val || ('' as T)),
 
     loading,
@@ -17,4 +19,4 @@ const useString = <T>(defaultValue?: T) => {
 
 export default useString;
 
-export type UseString = ReturnType<typeof useString>;
+export type UseString<T = string> = ReturnType<typeof useString<T>>;

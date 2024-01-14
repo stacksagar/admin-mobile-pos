@@ -1,10 +1,10 @@
-import { usePOSData } from '../../context/pos/pos';
+import { usePOS } from '../../context/pos/pos';
 import { useSetting } from '../../context/setting';
 import { showDate } from '../../utils/date';
 
-export default function POSInvoiceHeader({ invoiceID }: { invoiceID: number }) {
+export default function POSInvoiceHeader() {
   const { setting } = useSetting();
-  const { customer, warranty, sale } = usePOSData();
+  const { customer, invoice_id } = usePOS();
 
   return (
     <div className="text-center">
@@ -57,37 +57,37 @@ export default function POSInvoiceHeader({ invoiceID }: { invoiceID: number }) {
         <div className="flex w-full flex-col items-start p-4">
           <div className="flex items-center gap-x-2">
             <b> Name:</b>
-            <p> {customer?.name || sale?.name} </p>
+            <p> {customer?.data?.name} </p>
           </div>
 
           <div className="flex items-center gap-x-2 ">
             <b> Address:</b>
-            <p> {customer?.address || sale?.address} </p>
+            <p> {customer?.data?.address} </p>
           </div>
 
           <div className="flex items-center gap-x-2">
             <b> Phone:</b>
-            <p> {customer?.phone || sale?.phone} </p>
+            <p> {customer?.data?.phone} </p>
           </div>
           <div className="flex items-center gap-x-2">
             <b> Email:</b>
-            <p> {customer?.email || sale?.email} </p>
+            <p> {customer?.data?.email} </p>
           </div>
         </div>
 
         <div className="border-default flex w-full flex-col border-l p-4">
           <div className="flex items-center gap-x-2 whitespace-nowrap">
             <b>Invoice ID:</b>
-            <p> {invoiceID} </p>
+            <p> {invoice_id?.value || Math.floor(Math.random() * 99999)} </p>
           </div>
 
           <div className="flex items-center gap-x-2 whitespace-nowrap">
             <b>Date:</b>
-            <p> {showDate(new Date().toString())} </p>
+            <p> {showDate(new Date().toString(), true)} </p>
           </div>
           <div className="flex items-center gap-x-2 whitespace-nowrap">
-            <b>Deels/Warranty:</b>
-            <p> {warranty?.name} </p>
+            <b>Time:</b>
+            <p> {new Date()?.toLocaleTimeString()} </p>
           </div>
         </div>
       </div>

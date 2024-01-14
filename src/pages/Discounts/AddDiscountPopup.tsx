@@ -1,14 +1,20 @@
 import MuiResponsiveDialog from '../../common/MaterialUi/Modal/MuiResponsiveDialog';
+import { DiscountT } from '../../data';
 import { UseBoolean } from '../../hooks/state/useBoolean';
 import useDiscountFormik, { DiscountForms } from './useDiscountFormik';
 
 interface Props {
   openModal: UseBoolean;
-  editItem?: Discount;
+  editItem?: DiscountT;
+  _finally?: () => void;
 }
 
-export default function AddDiscountPopup({ openModal, editItem }: Props) {
-  const { formik } = useDiscountFormik({ openModal, editItem });
+export default function AddDiscountPopup({
+  openModal,
+  editItem,
+  _finally,
+}: Props) {
+  const { formik } = useDiscountFormik({ openModal, editItem, _finally });
 
   return (
     <MuiResponsiveDialog

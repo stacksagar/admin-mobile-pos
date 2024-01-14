@@ -17,6 +17,8 @@ const Dashboard = () => {
   const { dashboardData, setDashboardData } = useDashboardData();
   const axios = useAxiosPrivate();
 
+  console.log('working ');
+
   useEffect(() => {
     let isMount = true;
 

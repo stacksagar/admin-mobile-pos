@@ -3,33 +3,134 @@ import useBoolean from '../../hooks/state/useBoolean';
 import AddPaymentPopup from '../Payments/AddPaymentPopup';
 import AddDiscountPopup from '../Discounts/AddDiscountPopup';
 import AddVatPopup from '../Vats/AddVatPopup';
-import MuiSelect from '../../common/MaterialUi/Forms/MuiSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import MuiConfirmationDialog from '../../common/MaterialUi/Modal/MuiConfirmationDialog';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import FIcon from '../../common/Icons/FIcon';
+import useVats from '../../hooks/react-query/useVats';
+import { usePOS } from '../../context/pos/pos';
+import useDiscounts from '../../hooks/react-query/useDiscounts';
+import usePaymentMethods from '../../hooks/react-query/usePaymentMethods';
+import { useNavigate } from 'react-router-dom';
+import toast from '../../libs/toast';
+import error_message from '../../utils/error_message';
+import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import { SaleT } from '../../data';
 
 export default function PosFooter() {
+  const navigate = useNavigate();
+
+  const axios = useAxiosPrivate();
+  const {
+    vat,
+    discount,
+    paymentMethod,
+    paid,
+    products,
+    customer,
+    discount_amount,
+    vat_amount,
+    payable_amount,
+  } = usePOS();
   const invoiceCreating = useBoolean();
   const openAddDiscountModal = useBoolean();
   const openAddVatModal = useBoolean();
   const openAddMethodModal = useBoolean();
   const showClearConfirmation = useBoolean();
-  async function handleCreateInvoice() {}
+
+  const { vats, refetchVats } = useVats();
+  const { discounts, refetchDiscounts } = useDiscounts();
+  const { paymentMethods, refetchMethods } = usePaymentMethods();
+
+  async function handleCreateSale() {
+    if (products?.data?.length === 0) {
+      toast({
+        message: 'Please select a product!',
+        type: 'warning',
+      });
+      return;
+    }
+
+    if (!customer?.data?.name) {
+      toast({
+        message: 'Please select a customer!',
+        type: 'warning',
+      });
+      return;
+    }
+
+    try {
+      let paid_amount = Number(paid.value) || 0;
+
+      axios.put(`/customer/add-amount/${customer?.data?.id}`, {
+        paid: paid_amount,
+        due: payable_amount.value - paid_amount,
+      });
+
+      for (let i = 0; i < products.data?.length; i++) {
+        const product = products.data[i];
+
+        axios.put(`/product/occurred-sale/${product.id}`, {
+          quantity: product.quantity,
+        });
+
+        let paid = 0;
+        if (paid_amount > product.total_price) {
+          paid = product.total_price;
+        } else if (paid_amount < product.total_price) {
+          paid = paid_amount;
+        } else if (paid_amount < 1) {
+          paid_amount = 0;
+          paid = 0;
+        }
+
+        await axios.post<SaleT>(`/sale`, {
+          paid,
+          due: product?.total_price - paid,
+          discount: discount_amount.value,
+          vat: vat_amount.value,
+          quantity: product.quantity,
+          total: product.total_price,
+          method: paymentMethod?.data?.name,
+          with_variant: false,
+          productId: product?.id,
+          customerId: customer?.data?.id,
+        });
+
+        paid_amount = paid_amount - paid;
+      }
+    } catch (error) {
+      toast({
+        message: error_message(error),
+      });
+    } finally {
+      navigate('/pos_invoice');
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-      <AddDiscountPopup openModal={openAddDiscountModal} />
-      <AddVatPopup openModal={openAddVatModal} />
-      <AddPaymentPopup openModal={openAddMethodModal} />
+      <AddVatPopup openModal={openAddVatModal} _finally={refetchVats} />
+      <AddDiscountPopup
+        openModal={openAddDiscountModal}
+        _finally={refetchDiscounts}
+      />
+
+      <AddPaymentPopup
+        openModal={openAddMethodModal}
+        _finally={refetchMethods}
+      />
 
       <div className="flex items-center gap-2">
         <MuiSearchSelect
           label={'Select Discount'}
-          defaultTitle={null}
-          options={[]}
-          titleKey="name"
-          onChange={console.log}
+          defaultTitle={discount?.data?.name}
+          options={discounts.map((d) => ({
+            ...d,
+            key: `${d.name} ${d?.value}${d?.type === 'percentage' ? '%' : ''}`,
+          }))}
+          titleKey="key"
+          onChange={discount.set}
         />
         <IconButton onClick={openAddDiscountModal.setTrue}>
           <FIcon icon="plus" />
@@ -39,10 +140,13 @@ export default function PosFooter() {
       <div className="flex items-center gap-2">
         <MuiSearchSelect
           label={'Select Vat'}
-          defaultTitle={null}
-          options={[]}
-          titleKey="name"
-          onChange={console.log}
+          defaultTitle={vat.data?.name}
+          options={vats?.map((d) => ({
+            ...d,
+            key: `${d.name} ${d?.value}${d?.type === 'percentage' ? '%' : ''}`,
+          }))}
+          titleKey="key"
+          onChange={vat.set}
         />
 
         <IconButton onClick={openAddVatModal.setTrue}>
@@ -50,34 +154,27 @@ export default function PosFooter() {
         </IconButton>
       </div>
 
-      <div className="flex items-center sm:pt-1">
-        <MuiTextField label="Pay Today" type="number" />
-      </div>
-
       <div className="flex items-center gap-2">
         <MuiSearchSelect
           label={'Select Payment Method'}
-          defaultTitle={null}
-          options={[]}
+          defaultTitle={paymentMethod?.data?.name}
+          options={paymentMethods}
           titleKey="name"
-          onChange={console.log}
+          onChange={paymentMethod.set}
         />
         <IconButton onClick={openAddMethodModal.setTrue}>
           <FIcon icon="plus" />
         </IconButton>
       </div>
 
-      <div className="flex items-center sm:pt-1">
-        <MuiSelect
-          label="Status"
-          value={''}
-          onChange={console.log}
-          options={[
-            { title: 'Pending', value: 'pending' },
-            { title: 'Success', value: 'success' },
-          ]}
+      <div className="flex items-center gap-2">
+        <MuiTextField
+          value={paid.value}
+          onChange={paid.changeOnlyNumber}
+          label="Paid Now"
         />
       </div>
+
       <div className="col-span-full flex items-center justify-end gap-2">
         <MuiConfirmationDialog
           showModal={showClearConfirmation}
@@ -93,12 +190,8 @@ export default function PosFooter() {
         >
           Clear All
         </Button>
-        <Button
-          onClick={handleCreateInvoice}
-          variant="contained"
-          color="primary"
-        >
-          Create Invoice
+        <Button onClick={handleCreateSale} variant="contained" color="primary">
+          Create Sale & Invoice
           {invoiceCreating.true ? (
             <CircularProgress color="inherit" size={20} className="ml-2" />
           ) : null}

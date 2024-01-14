@@ -5,11 +5,11 @@ import useBoolean from '../../hooks/state/useBoolean';
 import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ProductT } from '../../data';
 import useCustomers from '../../hooks/react-query/useCustomers';
 import useProducts from '../../hooks/react-query/useProducts';
-import { usePOS } from '../../context/pos/pos'; 
+import { usePOS } from '../../context/pos/pos';
 import useObject from '../../hooks/state/useObject';
 interface Props {}
 
@@ -62,10 +62,6 @@ export default function POSHeaderSelector({}: Props) {
       });
     }
   }
-
-  useEffect(() => {
-    console.log('pos_products ', pos_products);
-  }, [pos_products]);
 
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:gap-6 xl:gap-12">

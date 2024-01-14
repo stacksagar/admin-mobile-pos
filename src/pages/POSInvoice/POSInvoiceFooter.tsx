@@ -1,24 +1,18 @@
 import { Button } from '@mui/material';
 import FIcon from '../../common/Icons/FIcon';
-import { Link } from 'react-router-dom';
-import { usePOSData } from '../../context/pos/pos';
+import { Link, useNavigate } from 'react-router-dom';
+import { usePOS } from '../../context/pos/pos';
 import { useSetting } from '../../context/setting';
 
-export default function POSInvoiceFooter({
-  invoiceID,
-  setInvoiceID,
-}: {
-  invoiceID: number;
-  setInvoiceID: React.Dispatch<React.SetStateAction<number>>;
-}) {
+export default function POSInvoiceFooter({}) {
+  const navigate = useNavigate();
   const { setting } = useSetting();
-  const { customer, onClearPOS } = usePOSData();
+  const { customer, onClearPOS } = usePOS();
 
   function printHandler() {
-    document.title = `invoice-${customer?.name || 'customer '}-${invoiceID}`;
+    document.title = `invoice-${customer?.data?.name || 'customer '}`;
     window.print();
     document.title = 'Mobile SHOP Management';
-    setInvoiceID(Math.floor(Math.random() * 9999999999));
   }
 
   return (
@@ -42,7 +36,14 @@ export default function POSInvoiceFooter({
       </div>
       <div className="hide_print flex justify-end gap-2">
         <Link to={`/pos`}>
-          <Button onClick={onClearPOS} variant="contained" color="success">
+          <Button
+            onClick={() => {
+              onClearPOS();
+              navigate(-1);
+            }}
+            variant="contained"
+            color="success"
+          >
             <FIcon icon="backpack" />
             Back
           </Button>

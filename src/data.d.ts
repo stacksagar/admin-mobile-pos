@@ -42,28 +42,25 @@ interface ExpenseT extends Common {
 
 interface PaymentT extends Common {
   name: string;
-  wallet: string;
+  wallet?: string;
   logo?: string;
   description?: string;
 }
 
 interface SaleT extends Common {
-  invoiceID: number;
-  payAmount?: number;
-  saleAmount?: number;
-  purchaseAmount?: number;
-  status?: string;
-  discount?: number;
-  vat?: number;
-  product: ProductT;
-  user: UserT;
-  warranty?: WarrantyT;
-  method?: PaymentT;
-
-  name?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
+  due: number;
+  paid: number;
+  discount: number;
+  vat: number;
+  quantity: number;
+  total: number;
+  method: string;
+  with_variant?: boolean;
+  properties?: object;
+  product?: ProductT;
+  customer?: UserT;
+  productId?: number;
+  customerId?: number;
 }
 
 interface SupplierT extends Common {
@@ -258,4 +255,16 @@ export interface BarcodeT extends Common {
   quantity?: number;
   productId?: number;
   product?: ProductT;
+}
+
+export interface VatT extends Common {
+  name: string;
+  value: number;
+  type: 'amount' | 'percentage';
+}
+
+export interface DiscountT extends Common {
+  name: string;
+  value: number;
+  type: 'amount' | 'percentage';
 }

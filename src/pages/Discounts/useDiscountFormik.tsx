@@ -5,31 +5,25 @@ import { UseBoolean } from '../../hooks/state/useBoolean';
 import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch } from '../../app/store';
-import {
-  addDiscount,
-  updateDiscount,
-} from '../../app/features/discounts/discountSlice';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import formik_dynamic_fields_required from '../../validations/formik/formik_dynamic_fields_required';
+import { DiscountT } from '../../data';
 
 type Props = {
   openModal?: UseBoolean;
-  editItem?: Discount;
+  editItem?: DiscountT;
   avoidUpdateToast?: boolean;
-  _onSuccessAdd?: (discount: Discount) => void;
   _finally?: () => void;
 };
 
-export default function useDiscountFormik({
+export default function useVatFormik({
   openModal,
   editItem,
   avoidUpdateToast,
-  _onSuccessAdd,
   _finally,
 }: Props) {
   const axios = useAxiosPrivate();
-  const dispatch = useAppDispatch();
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -43,16 +37,11 @@ export default function useDiscountFormik({
       formik.setSubmitting(true);
       try {
         if (editItem?.id) {
-          const { data } = await axios.put(`/discount/${editItem.id}`, values);
-          data?.discount && dispatch(updateDiscount(data?.discount));
+          await axios.put(`/discount/${editItem.id}`, values);
           !avoidUpdateToast && toast({ message: 'Discount Updated!' });
         } else {
           const { data } = await axios.post('/discount', values);
-          if (data?.discount) {
-            dispatch(addDiscount(data?.discount));
-            _onSuccessAdd && _onSuccessAdd(data?.discount);
-            toast({ message: 'New Discount Added!' });
-          }
+          if (data) toast({ message: 'New Discount Added!' });
         }
       } catch (error) {
         toast({
@@ -85,8 +74,6 @@ export const DiscountForms = ({ formik }: { formik: any }) => (
       id="name"
       label="Discount Name"
       {...formik.getFieldProps('name')}
-      touched={formik.touched.name}
-      error={formik.errors.name}
     />
 
     <div className="relative">
@@ -99,17 +86,18 @@ export const DiscountForms = ({ formik }: { formik: any }) => (
         touched={formik.touched.value}
         error={formik.errors.value}
       />
+
       <div className="absolute top-4 right-10 flex h-fit items-center">
         {formik?.values?.type === 'amount' ? '৳' : '%'}
       </div>
     </div>
 
     <FormControl fullWidth>
-      <InputLabel id="discount-by-label">Discount By</InputLabel>
+      <InputLabel id="discount-by-label">Vat By</InputLabel>
       <Select
         labelId="discount-by-label"
         id="discount-by"
-        label="Discount By"
+        label="Vat By"
         {...formik.getFieldProps('type')}
       >
         <MenuItem value="percentage">By Percentage (%) </MenuItem>

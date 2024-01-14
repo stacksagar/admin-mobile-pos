@@ -6,11 +6,6 @@ import { useFormik } from 'formik';
 import error_message from '../../utils/error_message';
 import toast from '../../libs/toast';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch } from '../../app/store';
-import {
-  addPayment,
-  updatePayment,
-} from '../../app/features/payments/paymentSlice';
 
 import SunEditorCore from 'suneditor/src/lib/core';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
@@ -20,15 +15,21 @@ import formik_all_fields_required from '../../validations/formik/formik_all_fiel
 import FileInput from '../../common/Forms/FileInput';
 import onChangeSetURL from '../../utils/onChangeSetURL';
 import setFormikField from '../../utils/formik/setFormikField';
+import { PaymentT } from '../../data';
+import formik_dynamic_fields_required from '../../validations/formik/formik_dynamic_fields_required';
 
 interface Props {
   openModal: UseBoolean;
-  editItem?: Payment;
+  editItem?: PaymentT;
+  _finally?: () => void;
 }
 
-export default function AddPaymentPopup({ openModal, editItem }: Props) {
+export default function AddPaymentPopup({
+  openModal,
+  editItem,
+  _finally,
+}: Props) {
   const axios = useAxiosPrivate();
-  const dispatch = useAppDispatch();
   const description = useRef<SunEditorCore>();
 
   const formik = useFormik({
@@ -38,7 +39,7 @@ export default function AddPaymentPopup({ openModal, editItem }: Props) {
       logo: '',
     },
 
-    validate: formik_all_fields_required,
+    validate: (values) => formik_dynamic_fields_required(values, ['name']),
 
     onSubmit: async (values) => {
       formik.setSubmitting(true);
@@ -50,18 +51,11 @@ export default function AddPaymentPopup({ openModal, editItem }: Props) {
 
       try {
         if (editItem?.id) {
-          const { data } = await axios.put(
-            `/payment/${editItem.id}`,
-            payableData
-          );
-          data?.payment && dispatch(updatePayment(data?.payment));
+          axios.put(`/payment-method/${editItem.id}`, payableData);
           toast({ message: 'Payment Updated!' });
         } else {
-          const { data } = await axios.post('/payment', payableData);
-          if (data?.payment) {
-            dispatch(addPayment(data?.payment));
-            toast({ message: 'New Payment Added!' });
-          }
+          const { data } = await axios.post('/payment-method', payableData);
+          if (data) toast({ message: 'New Payment Added!' });
         }
       } catch (error) {
         toast({
@@ -72,6 +66,7 @@ export default function AddPaymentPopup({ openModal, editItem }: Props) {
         openModal?.setFalse();
         formik.setSubmitting(false);
         formik.resetForm();
+        _finally && _finally();
       }
     },
   });
@@ -82,7 +77,7 @@ export default function AddPaymentPopup({ openModal, editItem }: Props) {
       wallet: editItem?.wallet || '',
       logo: editItem?.logo || '',
     });
-    // description?.current?.setContents(editItem?.description || '');
+    description?.current?.setContents(editItem?.description || '');
   }, [editItem]);
 
   return (
@@ -103,7 +98,7 @@ export default function AddPaymentPopup({ openModal, editItem }: Props) {
         />
 
         <MuiTextField
-          required
+          required={false}
           id="wallet"
           label="Receive Address"
           {...formik.getFieldProps('wallet')}

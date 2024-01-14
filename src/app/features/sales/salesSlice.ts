@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchSales } from './requests';
+import { SaleT } from '../../../data';
 
 interface State {
-  data: Sale[];
+  data: SaleT[];
   totalPages: number;
   currentPage: number;
   totalItems: number;

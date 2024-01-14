@@ -2,25 +2,22 @@ import { TableCell, TableRow } from '@mui/material';
 import BasicTable from '../../common/MaterialUi/Table/BasicTable';
 import POSInvoiceHeader from './POSInvoiceHeader';
 import POSInvoiceFooter from './POSInvoiceFooter';
-import { usePOSData } from '../../context/pos/pos';
+import { usePOS } from '../../context/pos/pos';
 import { uid } from 'uid';
-import { ProductT } from '../../data';
 
 export default function POSInvoice() {
   const {
-    posProducts,
+    products,
+    payable_amount,
     sub_total_amount,
-    discount_amount,
     vat_amount,
-    total_payable,
-    payAmount,
-    invoiceID,
-    setInvoiceID,
-  } = usePOSData();
+    discount_amount,
+    paid,
+  } = usePOS();
 
   return (
     <div className="print_area mx-auto w-full rounded bg-white p-6 shadow-sm xl:max-w-screen-md">
-      <POSInvoiceHeader invoiceID={invoiceID} />
+      <POSInvoiceHeader />
 
       {/* Tables */}
       <div className="custom_muitable_shadow space-y-2 pb-4 pt-2">
@@ -43,31 +40,25 @@ export default function POSInvoice() {
               <b>TOTAL</b>
             </TableCell>
           </TableRow>
-          {posProducts?.map((product) => (
+          {products?.data?.map((product) => (
             <TableRow key={uid()}>
               <TableCell>
-                {product?.products?.length ? (
-                  <div>
-                    {product?.products?.map((p: ProductT) => (
-                      <div key={Math.random()}> {p?.name} </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className=" max-w-[150px]">{product?.name}</div>
-                )}
+                <div className=" max-w-[150px]">{product?.name}</div>
               </TableCell>
+
               <TableCell className="border-default border-l">
                 {product?.barcode}
               </TableCell>
+
               <TableCell className="border-default border-l">
-                ৳{product?.sale_price}
+                {product?.sale_price}
               </TableCell>
               <TableCell className="border-default border-l">
                 {product?.quantity}
               </TableCell>
 
               <TableCell className="border-default border-l">
-                ৳{product?.total_price}
+                {product?.total_price}
               </TableCell>
             </TableRow>
           ))}
@@ -76,37 +67,39 @@ export default function POSInvoice() {
           <TableRow>
             <TableCell> SUBTOTAL </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>৳{sub_total_amount.value}</TableCell>
+            <TableCell>{sub_total_amount.value || 0}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell> VAT </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>৳{vat_amount.value}</TableCell>
+            <TableCell>{vat_amount.value || 0}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell> DISCOUNT </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>৳{discount_amount.value}</TableCell>
+            <TableCell>{discount_amount.value || 0}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell> TOTAL </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>৳{total_payable.value}</TableCell>
+            <TableCell>{payable_amount.value || 0}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell> Payment </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>৳{payAmount.value}</TableCell>
+            <TableCell>{paid.value || 0}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell> Due </TableCell>
             <TableCell> = </TableCell>
-            <TableCell>৳{total_payable.value - payAmount.value}</TableCell>
+            <TableCell>
+              {payable_amount.value - Number(paid.value || '0')}
+            </TableCell>
           </TableRow>
         </BasicTable>
       </div>
 
-      <POSInvoiceFooter invoiceID={invoiceID} setInvoiceID={setInvoiceID} />
+      <POSInvoiceFooter />
     </div>
   );
 }

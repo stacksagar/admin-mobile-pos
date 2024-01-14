@@ -7,7 +7,8 @@ import POSProducts from './POSProducts';
 import { usePOS } from '../../context/pos/pos';
 
 export default function POS() {
-  const { customer } = usePOS();
+  const { customer, paymentMethod } = usePOS();
+
   return (
     <div className="space-y-2 md:bg-white md:p-8 md:dark:bg-black">
       <POSHeaderSelector />
@@ -50,15 +51,9 @@ export default function POS() {
 
             <TableRow>
               <TableCell>
-                <b>Warranty</b>
-              </TableCell>
-              <TableCell>{}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
                 <b>Payment Method</b>
               </TableCell>
-              <TableCell>{}</TableCell>
+              <TableCell>{paymentMethod?.data?.name}</TableCell>
             </TableRow>
           </BasicTable>
         </div>

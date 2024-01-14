@@ -29,6 +29,7 @@ const Vats = lazy(() => import('../pages/Vats/Vats'));
 const SalesAndReturn = lazy(
   () => import('../pages/SalesAndReturn/SalesAndReturn')
 );
+const Sales = lazy(() => import('../pages/Sales/Sales'));
 
 const Expenses = lazy(() => import('../pages/Expenses/Expenses'));
 const ExpensesCategories = lazy(
@@ -44,6 +45,7 @@ const POSInvoice = lazy(() => import('../pages/POSInvoice/POSInvoice'));
 const SupplierHistoryInvoice = lazy(
   () => import('../pages/SupplierHistoryInvoice/SupplierHistoryInvoice')
 );
+
 const SupplierHistories = lazy(
   () => import('../pages/SupplierHistories/SupplierHistories')
 );
@@ -73,6 +75,7 @@ const admin_pages = {
   payments: Payments,
   discounts: Discounts,
   vats: Vats,
+  sales: Sales,
   'sales-and-return': SalesAndReturn,
   expenses: Expenses,
   'expenses-categories': ExpensesCategories,

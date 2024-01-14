@@ -11,6 +11,7 @@ import { UseBoolean } from '../../../hooks/state/useBoolean';
 interface Props {
   showModal: UseBoolean;
   warningText: string;
+  warningSubText?: string;
 
   loading?: boolean;
   onConfirm?: () => void;
@@ -23,6 +24,7 @@ export default function MuiConfirmationDialog({
   loading,
   onConfirm,
   confirmButtonText,
+  warningSubText,
 }: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -64,6 +66,11 @@ export default function MuiConfirmationDialog({
         <h3 className="p-4 text-center text-xl font-medium text-yellow-600">
           {warningText}
         </h3>
+        {warningSubText ? (
+          <p className="mx-auto max-w-[350px] text-center font-medium tracking-wider text-yellow-600">
+            <small> {warningSubText} </small>
+          </p>
+        ) : null}
         <div className="relative md:min-w-[500px]">
           <div className="flex justify-end gap-2 pt-5">
             <Button onClick={handleClose} type="button">
