@@ -91,7 +91,7 @@ export default function AddBarcodeModal({ openModal, onSuccess }: Props) {
   }
 
   async function handleSubmit() {
-    const p = selectedProduct;
+    const p = selectedProduct
     const payable: any = {
       productId: p?.id,
       with_multi: p?.with_variant,

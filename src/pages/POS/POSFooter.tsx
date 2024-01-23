@@ -31,6 +31,7 @@ export default function PosFooter() {
     discount_amount,
     vat_amount,
     payable_amount,
+    onClearPOS,
   } = usePOS();
   const invoiceCreating = useBoolean();
   const openAddDiscountModal = useBoolean();
@@ -70,10 +71,6 @@ export default function PosFooter() {
       for (let i = 0; i < products.data?.length; i++) {
         const product = products.data[i];
 
-        axios.put(`/product/occurred-sale/${product.id}`, {
-          quantity: product.quantity,
-        });
-
         let paid = 0;
         if (paid_amount > product.total_price) {
           paid = product.total_price;
@@ -84,7 +81,7 @@ export default function PosFooter() {
           paid = 0;
         }
 
-        await axios.post<SaleT>(`/sale`, {
+        const newSaleData: SaleT = {
           paid,
           due: product?.total_price - paid,
           discount: discount_amount.value,
@@ -95,7 +92,27 @@ export default function PosFooter() {
           with_variant: false,
           productId: product?.id,
           customerId: customer?.data?.id,
-        });
+        };
+
+        if (product?.with_variant) {
+          axios.put(`/product/remove-imeis/${product.id}`, {
+            quantity: product.quantity,
+            imei: product?.imei,
+          });
+          newSaleData.with_variant = true;
+          newSaleData.properties = {
+            processor: product?.processor,
+            ram: product?.ram,
+            rom: product?.rom,
+            imei: product?.imei,
+          };
+        } else {
+          axios.put(`/product/occurred-sale/${product.id}`, {
+            quantity: product.quantity,
+          });
+        }
+
+        await axios.post<SaleT>(`/sale`, newSaleData);
 
         paid_amount = paid_amount - paid;
       }
@@ -179,7 +196,10 @@ export default function PosFooter() {
         <MuiConfirmationDialog
           showModal={showClearConfirmation}
           warningText={'Want to clear all POS data ? '}
-          onConfirm={console.log}
+          onConfirm={() => {
+            onClearPOS();
+            showClearConfirmation.setFalse();
+          }}
           confirmButtonText={'Yes, Clear All'}
         />
 

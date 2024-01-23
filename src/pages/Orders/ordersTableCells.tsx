@@ -9,11 +9,11 @@ import { updateOrder } from '../../app/features/orders/orderSlice';
 import capitalize from '../../utils/capitalize';
 import { uid } from 'uid';
 import MuiSelect from '../../common/MaterialUi/Forms/MuiSelect';
-import FIcon from '../../common/Icons/FIcon';
-import { usePOSData } from '../../context/pos/pos';
+import FIcon from '../../common/Icons/FIcon'; 
 import { Link } from 'react-router-dom';
 import { addSale } from '../../app/features/sales/salesSlice';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import { OrderStatus } from '../../data';
 
 const ordersTableCells: MuiTableHeader<Order>[] = [
   {
@@ -172,8 +172,7 @@ const ordersTableCells: MuiTableHeader<Order>[] = [
   {
     key: 'actions',
     ActionButtons({ row }) {
-      const axios = useAxiosPrivate();
-      const { setSaleDataToPOS } = usePOSData();
+      const axios = useAxiosPrivate(); 
       const dispatch = useAppDispatch();
       const [status, setStatus] = useState<OrderStatus>('' as OrderStatus);
       const banning = useBoolean();
@@ -236,8 +235,7 @@ const ordersTableCells: MuiTableHeader<Order>[] = [
                     },
                     customer: row.user,
                   };
-
-                  setSaleDataToPOS(demoSaleData);
+ 
                 }}
                 variant="contained"
                 size="small"

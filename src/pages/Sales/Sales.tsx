@@ -67,8 +67,9 @@ export default function Sales() {
   }
 
   function handleReturnButton(sale: SaleT) {
-    setSale(sale);
-    showReturnWarning.toggle();
+    console.log('sale ', sale);
+    // setSale(sale);
+    // showReturnWarning.toggle();
   }
 
   return (

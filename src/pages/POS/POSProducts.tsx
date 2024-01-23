@@ -52,7 +52,18 @@ export default function POSProducts({}: Props) {
       >
         {products?.data?.map((product) => (
           <TableRow key={uid()}>
-            <TableCell>{product?.name}</TableCell>
+            <TableCell>
+              <div className="whitespace-nowrap">
+                {product?.name}
+                {product?.with_variant ? (
+                  <>
+                    <p> Color: {product?.color} </p>
+                    <p> RAM: {product?.ram} </p>
+                    <p> ROM: {product?.rom} </p>
+                  </>
+                ) : null}
+              </div>
+            </TableCell>
             <TableCell>{product?.barcode}</TableCell>
             <TableCell>
               <ChangeNumberField

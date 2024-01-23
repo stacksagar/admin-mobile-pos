@@ -6,25 +6,17 @@ import MuiTable from '../../common/MaterialUi/Table/MuiTable';
 import productsTableCells from './productsTableCells';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
-import { ProductT } from '../../data';
-import { useQuery } from '@tanstack/react-query';
-import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import useProducts from '../../hooks/react-query/useProducts';
+import { useEffect } from 'react';
 
 export default function Users() {
-  const axios = useAxiosPrivate();
   const deleting = useBoolean();
 
-  const { data, refetch, isLoading } = useQuery<ProductT[]>(
-    ['fetchStockInProducts'],
-    async () => {
-      try {
-        const { data } = await axios.get(`/product/stock-in/all`);
-        return data || [];
-      } catch (error) {
-        console.log('error ', error);
-      }
-    }
-  );
+  const { products, refetchProducts, fetchingProducts } = useProducts();
+
+  useEffect(() => {
+    console.log('products ', products);
+  }, [products]);
 
   async function onMultipleDelete(ids: ID[]) {
     deleting.setTrue();
@@ -40,7 +32,7 @@ export default function Users() {
       );
     } finally {
       deleting.setFalse();
-      refetch();
+      refetchProducts();
     }
   }
 
@@ -51,11 +43,11 @@ export default function Users() {
 
       <div className="max-w-full overflow-hidden">
         <MuiTable
-          onRefreshData={refetch}
+          onRefreshData={refetchProducts}
           onDelete={onMultipleDelete}
           tableCells={productsTableCells}
-          rows={data || []}
-          loading={isLoading}
+          rows={products || []}
+          loading={fetchingProducts}
           CustomButton={
             <Button variant="contained" size="medium">
               <Link to="/add-product"> Buy Product </Link>

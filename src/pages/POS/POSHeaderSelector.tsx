@@ -5,12 +5,19 @@ import useBoolean from '../../hooks/state/useBoolean';
 import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
-import { useState } from 'react';
-import { ProductT } from '../../data';
+import { useEffect, useState } from 'react';
+import { ProductT, ProductVariant, SingleVariant } from '../../data';
 import useCustomers from '../../hooks/react-query/useCustomers';
 import useProducts from '../../hooks/react-query/useProducts';
 import { usePOS } from '../../context/pos/pos';
 import useObject from '../../hooks/state/useObject';
+import MuiSelect from '../../common/MaterialUi/Forms/MuiSelect';
+import { Barcode, VariantOption } from '../BarcodePrint/AddBarcodeModal';
+import useString from '../../hooks/state/useString';
+import SelectVariantAndQuantity from './SelectVariantAndQuantity';
+
+type ProductT2 = ProductT & { findname: string };
+
 interface Props {}
 
 export default function POSHeaderSelector({}: Props) {
@@ -18,11 +25,16 @@ export default function POSHeaderSelector({}: Props) {
 
   const { customers } = useCustomers();
   const { products } = useProducts();
+  const [selectedVariants, setSelectedVariants] = useState([] as Barcode[]);
 
-  const selectedProduct = useObject({} as ProductT);
+  const selectVariantValue = useString('');
+  const [selectedVariantOption, setSelectedVariantOption] = useState(
+    {} as VariantOption
+  );
 
+  const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
+  const selectedProduct = useObject({} as ProductT2);
   const openAddCustomerPopup = useBoolean();
-
   const [barcode, setBarcode] = useState('');
 
   function handleWithScan(code: string) {
@@ -34,8 +46,26 @@ export default function POSHeaderSelector({}: Props) {
   }
 
   function handleSelectProduct(product: ProductT) {
-    selectedProduct.set(product);
-    if (!product?.with_variant) {
+    const selected = product as ProductT2;
+    selectedProduct.set(selected);
+
+    if (product?.with_variant) {
+      const variants: ProductVariant[] = [...(selected?.variants || [])];
+      const lists = variants?.map((v, index) => ({
+        index,
+        title: `${v?.rom}-${v?.ram} ~ (${v?.processor})`,
+        price: v.sale_price,
+        ram: v.ram,
+        rom: v.rom,
+        processor: v.processor,
+        colors: Object.entries(v?.imeis)?.map(([color, imeis]) => ({
+          color,
+          quantity: imeis.length,
+          imeis,
+        })),
+      }));
+      setVariantOptions(lists as any);
+    } else {
       addWithoutVariantProduct(product);
     }
   }
@@ -62,6 +92,27 @@ export default function POSHeaderSelector({}: Props) {
       });
     }
   }
+
+  function addWithVariantProduct(items: SingleVariant[]) {
+    items?.map((item) => {
+      const product = {
+        ...selectedProduct.data,
+        ...item,
+        quantity: 1,
+        price: item.price,
+        total_price: item.price,
+      };
+
+      const found = pos_products.data?.find((p) => p.imei === item.imei);
+      if (!found) {
+        pos_products.set((p) => [...p, product as any]);
+      }
+    });
+  }
+
+  useEffect(() => {
+    console.log('pos_products ', pos_products);
+  }, [pos_products]);
 
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:gap-6 xl:gap-12">
@@ -105,6 +156,63 @@ export default function POSHeaderSelector({}: Props) {
         <IconButton onClick={openAddCustomerPopup.setTrue}>
           <FIcon icon="plus" />
         </IconButton>
+      </div>
+
+      <div className="col-span-full">
+        {selectedProduct?.data?.with_variant ? (
+          <div>
+            <div className="grid grid-cols-2 items-start gap-4">
+              <MuiSelect
+                label="Select Variant"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedVariantOption(
+                    (variantOptions.find((v) => v.title === value) || {}) as any
+                  );
+                  selectVariantValue.setCustom(value as string);
+                }}
+                value={selectVariantValue.value}
+                options={variantOptions.map((v) => ({
+                  title: v.title,
+                  value: v.title,
+                }))}
+              />
+              <SelectVariantAndQuantity
+                getVariants={addWithVariantProduct}
+                selectedVO={selectedVariantOption}
+                setSelectedVO={setSelectedVariantOption}
+                resetSelectedVariant={() => selectVariantValue.setCustom('')}
+              />
+            </div>
+            <br />
+
+            <div>
+              <div className="flex flex-wrap items-center gap-6">
+                {selectedVariants?.map((item) => (
+                  <div key={item.imei} className="flex items-center gap-2">
+                    <p className="space-x-1">
+                      <span>IIMEI:{item?.imei} </span>
+                      <b>
+                        ({item?.ram}/{item?.rom})
+                      </b>
+                      <span>({item?.price})</span>
+                    </p>
+                    <IconButton
+                      onClick={() =>
+                        setSelectedVariants((p) =>
+                          p.filter((c) => c.imei !== item?.imei)
+                        )
+                      }
+                      size="small"
+                    >
+                      <FIcon icon="trash" />
+                    </IconButton>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

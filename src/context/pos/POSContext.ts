@@ -1,17 +1,19 @@
-import { DiscountT, PaymentT, ProductT, UserT, VatT } from '../../data';
+import {
+  DiscountT,
+  PaymentT,
+  ProductT,
+  SingleVariant,
+  UserT,
+  VatT,
+} from '../../data';
 import { UseArray } from '../../hooks/state/useArray';
 import { UseNumber } from '../../hooks/state/useNumber';
 import { UseObject } from '../../hooks/state/useObject';
 import { UseString } from '../../hooks/state/useString';
 
-export interface POSProductT extends ProductT {
-  color?: string;
-  ram?: string;
-  rom?: string;
-  imei?: string;
-  processor?: string;
+export type PPT = ProductT & SingleVariant;
 
-  price: number;
+export interface POSProductT extends PPT {
   quantity: number;
   total_price: number;
 }

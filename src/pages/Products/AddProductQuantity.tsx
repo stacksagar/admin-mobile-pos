@@ -186,8 +186,7 @@ export default function AddProductQuantity({}: PropsT) {
         variants: mergeVariants(prevVariants, newVariants),
       },
     };
-
-    console.log('payable_data ', payable_data);
+ 
 
     try {
       await axios.put(`/product/add-quantity`, payable_data);

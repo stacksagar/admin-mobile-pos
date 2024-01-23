@@ -22,7 +22,19 @@ export function POSProvider({ children }: { children: React.ReactNode }) {
   const vat_amount = useNumber(0);
   const payable_amount = useNumber(0);
 
-  function onClearPOS() {}
+  function onClearPOS() {
+    products.reset();
+    customer.reset();
+    vat.reset();
+    discount.reset();
+    paymentMethod.reset();
+    paid.reset();
+    invoice_id.reset();
+    sub_total_amount.reset();
+    discount_amount.reset();
+    vat_amount.reset();
+    payable_amount.reset();
+  }
 
   return (
     <POSContext.Provider

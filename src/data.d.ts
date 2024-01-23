@@ -1,6 +1,15 @@
 type Roles = 'user' | 'custom' | 'moderator' | 'admin';
 type OrderStatus = 'processing' | 'delivered' | 'canceled';
 
+export type SingleVariant = {
+  color?: string;
+  imei?: string;
+  ram?: string;
+  rom?: string;
+  processor?: string;
+  price: number;
+};
+
 interface KeyValuePair {
   [key: string]: any;
 }
@@ -56,7 +65,12 @@ interface SaleT extends Common {
   total: number;
   method: string;
   with_variant?: boolean;
-  properties?: object;
+  properties?: {
+    processor?: string;
+    ram?: string;
+    rom?: string;
+    imei?: string;
+  };
   product?: ProductT;
   customer?: UserT;
   productId?: number;
