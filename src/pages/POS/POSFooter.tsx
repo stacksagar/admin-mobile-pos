@@ -105,6 +105,7 @@ export default function PosFooter() {
             ram: product?.ram,
             rom: product?.rom,
             imei: product?.imei,
+            color: product?.color,
           };
         } else {
           axios.put(`/product/occurred-sale/${product.id}`, {

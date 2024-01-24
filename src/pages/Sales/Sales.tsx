@@ -41,9 +41,16 @@ export default function Sales() {
   async function handleReturn() {
     loading.setTrue();
     try {
-      await axios.put(`/product/return/${sale?.productId}`, {
-        quantity: sale?.quantity,
-      });
+      if (sale?.with_variant) {
+        await axios.put(`/product/return-imei/${sale?.productId}`, {
+          properties: sale.properties,
+        });
+      } else {
+        await axios.put(`/product/return/${sale?.productId}`, {
+          quantity: sale?.quantity,
+        });
+      }
+
       await axios.delete(`/sale/${sale?.id}`);
 
       await axios.put(`/customer/remove-amount/${sale?.customerId}`, {
@@ -67,9 +74,8 @@ export default function Sales() {
   }
 
   function handleReturnButton(sale: SaleT) {
-    console.log('sale ', sale);
-    // setSale(sale);
-    // showReturnWarning.toggle();
+    setSale(sale);
+    showReturnWarning.toggle();
   }
 
   return (

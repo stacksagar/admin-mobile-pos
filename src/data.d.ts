@@ -70,6 +70,7 @@ interface SaleT extends Common {
     ram?: string;
     rom?: string;
     imei?: string;
+    color?: string;
   };
   product?: ProductT;
   customer?: UserT;

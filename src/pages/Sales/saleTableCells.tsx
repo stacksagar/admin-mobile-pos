@@ -73,6 +73,25 @@ function saleTableCells(handleReturnButton: (sale: SaleT) => void) {
         return (
           <div>
             <p> {row?.product?.name} </p>
+            {row?.with_variant ? (
+              <>
+                <p>
+                  <b>ram:</b> {row.properties?.ram}{' '}
+                </p>
+                <p>
+                  <b>rom:</b> {row.properties?.rom}{' '}
+                </p>
+                <p>
+                  <b>color:</b> {row.properties?.color}{' '}
+                </p>
+                <p>
+                  <b>processor:</b> {row.properties?.processor}{' '}
+                </p>
+                <p>
+                  <b>imei:</b> {row.properties?.imei}{' '}
+                </p>
+              </>
+            ) : null}
           </div>
         );
       },
