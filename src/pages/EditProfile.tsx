@@ -29,10 +29,7 @@ export default function UserProfile() {
         formData.append('phone', values.phone);
         formData.append('picture', values.picture);
 
-        const { data } = await axios.post(
-          `/auth/update?id=${auth?.user?.id}`,
-          formData
-        );
+        await axios.post(`/auth/update?id=${auth?.user?.id}`, formData);
 
         setAuth((prev: any) => ({
           ...prev,

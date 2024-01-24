@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import useBoolean, { UseBoolean } from '../../hooks/state/useBoolean';
+import useBoolean from '../../hooks/state/useBoolean';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import { ProductT, ProductVariant, SupplierT } from '../../data';
@@ -16,10 +16,7 @@ import AddEditSupplierPopup from '../Suppliers/AddEditSupplierPopup';
 import toast from '../../libs/toast';
 import mergeVariants from '../../libs/algorithms/merge_variants';
 
-interface PropsT {
-  openModal: UseBoolean;
-}
-export default function AddProductQuantity({}: PropsT) {
+export default function AddProductQuantity() {
   const { auth } = useAuth();
   const axios = useAxiosPrivate();
   const [params] = useSearchParams();
@@ -186,7 +183,6 @@ export default function AddProductQuantity({}: PropsT) {
         variants: mergeVariants(prevVariants, newVariants),
       },
     };
- 
 
     try {
       await axios.put(`/product/add-quantity`, payable_data);

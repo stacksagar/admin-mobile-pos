@@ -49,6 +49,7 @@ const SupplierHistoryInvoice = lazy(
 const SupplierHistories = lazy(
   () => import('../pages/SupplierHistories/SupplierHistories')
 );
+
 const Settings = lazy(() => import('../pages/Settings/Settings'));
 const Warranties = lazy(() => import('../pages/Warranties/Warranties'));
 
@@ -58,7 +59,7 @@ const ChangePassword = lazy(
 const BarcodePrint = lazy(() => import('../pages/BarcodePrint/BarcodePrint'));
 
 const admin_pages = {
-  '': Dashboard,
+  '/': Dashboard,
   'edit-profile': EditProfile,
   users: Users,
   products: Products,

@@ -1,4 +1,4 @@
-type Roles = 'user' | 'custom' | 'moderator' | 'admin';
+export type Roles = 'user' | 'custom' | 'moderator' | 'admin';
 type OrderStatus = 'processing' | 'delivered' | 'canceled';
 
 export type SingleVariant = {

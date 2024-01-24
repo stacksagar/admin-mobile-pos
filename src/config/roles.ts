@@ -1,14 +1,15 @@
-export type Roles = "user" | "moderator" | "admin";
+export type Roles = 'user' | 'custom' | 'moderator' | 'admin';
 
 export const roles = {
-  user: "user",
-  moderator: "moderator",
-  admin: "admin",
+  user: 'user',
+  moderator: 'moderator',
+  admin: 'admin',
 };
 
 const roles_volume = {
   user: 25,
   moderator: 50,
+  custom: 75,
   admin: 100,
 };
 
