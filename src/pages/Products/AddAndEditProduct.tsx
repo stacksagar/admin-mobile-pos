@@ -290,6 +290,24 @@ export default function AddAndEditProduct() {
               <h3 className="section_header">Product Details</h3>
             </div>
 
+            {isEditPage ? null : (
+              <div className="col-span-full flex cursor-pointer items-center gap-1 text-lg font-semibold">
+                <label className="cursor-pointer" htmlFor="with_variants">
+                  With Variants
+                </label>
+                <Checkbox
+                  id="with_variants"
+                  checked={productFormik.values.with_variant}
+                  {...productFormik.getFieldProps('in_stock')}
+                  onChange={(e) =>
+                    productFormik.setFieldValue(
+                      'with_variant',
+                      e.target.checked
+                    )
+                  }
+                />
+              </div>
+            )}
             <MuiTextField
               required
               id="name"
@@ -299,6 +317,7 @@ export default function AddAndEditProduct() {
 
             <MuiTextField
               id="barcode"
+              disabled={productFormik.values.with_variant}
               label="Custom Barcode"
               {...productFormik.getFieldProps('barcode')}
             />
@@ -382,25 +401,6 @@ export default function AddAndEditProduct() {
                 onChange={(custom) => changeFormik('custom', custom)}
               />
             </div>
-
-            {isEditPage ? null : (
-              <div className="flex cursor-pointer items-center gap-1 text-lg font-semibold">
-                <label className="cursor-pointer" htmlFor="with_variants">
-                  With Variants
-                </label>
-                <Checkbox
-                  id="with_variants"
-                  checked={productFormik.values.with_variant}
-                  {...productFormik.getFieldProps('in_stock')}
-                  onChange={(e) =>
-                    productFormik.setFieldValue(
-                      'with_variant',
-                      e.target.checked
-                    )
-                  }
-                />
-              </div>
-            )}
 
             {productFormik?.values?.with_variant ? (
               <div className="col-span-full">

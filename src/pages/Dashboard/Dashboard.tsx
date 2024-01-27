@@ -45,6 +45,16 @@ const Dashboard = () => {
           <div className="xl:col-span-4">
             <DashboardCard
               to="/sales-and-return"
+              value={dashboardData?.today_purchased}
+              title="Today Purchased"
+              icon="bangladeshi-taka-sign"
+              bg="bg-blue-500"
+              currency="৳"
+            />
+          </div>{' '}
+          <div className="xl:col-span-4">
+            <DashboardCard
+              to="/sales-and-return"
               value={dashboardData?.weekly_purchased}
               title="Weekly Purchased"
               icon="bangladeshi-taka-sign"
@@ -72,8 +82,7 @@ const Dashboard = () => {
               currency="৳"
             />
           </div>
-
-          <motion.div variants={fromTopMotion} className="xl:col-span-4">
+          {/* <motion.div variants={fromTopMotion} className="xl:col-span-4">
             <DashboardCard
               to="/customers"
               value={dashboardData?.running_purchased}
@@ -82,7 +91,7 @@ const Dashboard = () => {
               bg="bg-purple-600"
               currency="৳"
             />
-          </motion.div>
+          </motion.div> */}
           <motion.div variants={fromTopMotion} className="xl:col-span-4">
             <DashboardCard
               to="/customers"
@@ -93,7 +102,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </motion.div>
-
           <div className="xl:col-span-4">
             <DashboardCard
               to="/sales-and-return"
@@ -104,7 +112,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </div>
-
           <div className="xl:col-span-4">
             <DashboardCard
               to="/sales-and-return"
@@ -138,7 +145,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </div>
-
           <motion.div variants={fromTopMotion} className="xl:col-span-6">
             <DashboardCard
               to="/customers"
@@ -159,7 +165,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </motion.div>
-
           <motion.div variants={fromTopMotion} className="xl:col-span-3">
             <DashboardCard
               to="/sales-and-return"
@@ -203,7 +208,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </motion.div>
-
           <div className="xl:col-span-3">
             <DashboardCard
               to="/sales-and-return"
@@ -247,7 +251,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </div>
-
           <motion.div variants={fromBottomMotion} className="xl:col-span-3">
             <DashboardCard
               to="/sales-and-return"
@@ -291,7 +294,6 @@ const Dashboard = () => {
               currency="৳"
             />
           </motion.div>
-
           <div className="xl:col-span-4">
             <DashboardCard
               to="/products"
@@ -352,7 +354,6 @@ const Dashboard = () => {
               currency=""
             />
           </div>
-
           <div className="xl:col-span-4">
             <DashboardCard
               to="/sales-and-return"

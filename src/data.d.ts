@@ -43,10 +43,9 @@ interface VatT extends Common {
 
 interface ExpenseT extends Common {
   name?: string;
-  category?: string;
-  cost?: number;
   date?: string;
-  createdAt: string;
+  cost?: number;
+  category?: CategoryT;
 }
 
 interface PaymentT extends Common {

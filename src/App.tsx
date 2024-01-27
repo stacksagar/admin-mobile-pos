@@ -100,7 +100,12 @@ function App() {
       </Route>
 
       {/* Access Denied (if minimum role is not equal!) */}
-      <Route path="/access-denied" element={<AccessDenied />} />
+      <Route
+        path="/access-denied"
+        element={ 
+            <AccessDenied /> 
+        }
+      />
 
       {/* Not Found Page (if visit any incorrect url) */}
       <Route path="*" element={<NotFound />} />
