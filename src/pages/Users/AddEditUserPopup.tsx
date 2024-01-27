@@ -6,9 +6,10 @@ import useCustomerFormik, { CustomerForms } from './useUserFormik';
 interface Props {
   openModal: UseBoolean;
   editItem?: UserT;
+  isForCustomer?: boolean;
 }
 
-export default function AddCustomerPopup({ openModal, editItem }: Props) {
+export default function AddUserPopup({ openModal, editItem }: Props) {
   const { formik } = useCustomerFormik({ openModal, editItem });
 
   return (

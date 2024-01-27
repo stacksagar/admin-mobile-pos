@@ -96,6 +96,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               ]}
             />
 
+            <SidebarItemGroup
+              title="Warranty"
+              icon="calendar"
+              items={[
+                {
+                  to: '/warranty-pos',
+                  title: 'Warranty POS',
+                  icon: 'calendar-alt',
+                },
+                {
+                  to: '/warranty-dashboard',
+                  title: 'W. Dashboard',
+                  icon: 'calendar',
+                },
+                {
+                  to: '/warranties',
+                  title: 'Warranties',
+                  icon: 'calendar-alt',
+                },
+              ]}
+            />
+
             <SidebarItem
               to="/barcode-print"
               title="Barcode Print"
@@ -157,11 +179,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to: '/vats',
                   title: 'Vat',
                   icon: 'v',
-                },
-                {
-                  to: '/warranties',
-                  title: 'Warranties',
-                  icon: 'w',
                 },
                 {
                   to: '/customers',

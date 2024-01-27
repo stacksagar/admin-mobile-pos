@@ -129,7 +129,7 @@ export const CustomerForms = ({ formik }: { formik: any }) => (
         Role - Moderator <small> - (Only Can Read) </small>{' '}
       </MenuItem>
       <MenuItem value="admin">
-        Role - Admin <small> - (Create/Read/Update/Delete) </small>{' '}
+        Role - Admin <small> - (Create/Read/Update/Delete) </small>
       </MenuItem>
     </Select>
   </div>

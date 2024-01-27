@@ -52,6 +52,10 @@ const SupplierHistories = lazy(
 
 const Settings = lazy(() => import('../pages/Settings/Settings'));
 const Warranties = lazy(() => import('../pages/Warranties/Warranties'));
+const WarrantyPOS = lazy(() => import('../pages/WarrantyPOS/WarrantyPOS'));
+const WarrantyDashboard = lazy(
+  () => import('../pages/WarrantyDashboard/WarrantyDashboard')
+);
 
 const ChangePassword = lazy(
   () => import('../pages/Authentication/ChangePassword')
@@ -88,6 +92,8 @@ const admin_pages = {
   'change-password': ChangePassword,
   settings: Settings,
   warranties: Warranties,
+  'warranty-pos': WarrantyPOS,
+  'warranty-dashboard': WarrantyDashboard,
   'barcode-print': BarcodePrint,
 };
 
