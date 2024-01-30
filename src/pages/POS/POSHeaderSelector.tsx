@@ -5,16 +5,19 @@ import useBoolean from '../../hooks/state/useBoolean';
 import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProductT, ProductVariant, SingleVariant } from '../../data';
 import useCustomers from '../../hooks/react-query/useCustomers';
 import useProducts from '../../hooks/react-query/useProducts';
 import { usePOS } from '../../context/pos/pos';
 import useObject from '../../hooks/state/useObject';
 import MuiSelect from '../../common/MaterialUi/Forms/MuiSelect';
-import { Barcode, VariantOption } from '../BarcodePrint/AddBarcodeModal';
+import { Barcode } from '../BarcodePrint/AddBarcodeModal';
 import useString from '../../hooks/state/useString';
-import SelectVariantAndQuantity from './SelectVariantAndQuantity';
+import SelectVariantAndQuantity, {
+  VariantOption,
+} from './SelectVariantAndQuantity';
+import findProductVariantWithIMEI from '../../utils/findProductVariantWithIMEI';
 
 type ProductT2 = ProductT & { findname: string };
 
@@ -39,10 +42,17 @@ export default function POSHeaderSelector({}: Props) {
 
   function handleWithScan(code: string) {
     setBarcode(code);
-    const product = products.find((p) => p.barcode?.trim() === code?.trim());
-    if (product?.id && code) {
+    const found_product = products.find(
+      (p) => p.barcode?.trim() === code?.trim()
+    );
+    const { variant, product } = findProductVariantWithIMEI(products, code);
+
+    if (found_product?.id && code) {
+      addWithoutVariantProduct(found_product);
       setBarcode('');
-      addWithoutVariantProduct(product);
+    } else if (variant && product) {
+      addWithVariantProduct([variant] as SingleVariant[], product);
+      setBarcode('');
     }
   }
 
@@ -56,6 +66,7 @@ export default function POSHeaderSelector({}: Props) {
         index,
         title: `${v?.rom}-${v?.ram} ~ (${v?.processor})`,
         price: v.sale_price,
+        purchase_price: v.purchase_price,
         ram: v.ram,
         rom: v.rom,
         processor: v.processor,
@@ -94,14 +105,16 @@ export default function POSHeaderSelector({}: Props) {
     }
   }
 
-  function addWithVariantProduct(items: SingleVariant[]) {
+  function addWithVariantProduct(items: SingleVariant[], p?: ProductT) {
     items?.map((item) => {
       const product = {
-        ...selectedProduct.data,
+        ...(p || selectedProduct.data),
         ...item,
         quantity: 1,
         price: item.price,
+        sale_price: item.price,
         total_price: item.price,
+        purchase_price: item?.purchase_price,
       };
 
       const found = pos_products.data?.find((p) => p.imei === item.imei);
@@ -110,6 +123,10 @@ export default function POSHeaderSelector({}: Props) {
       }
     });
   }
+
+  useEffect(() => {
+    console.log('selectedVariantOption ', selectedVariantOption);
+  }, [selectedVariantOption]);
 
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:gap-6 xl:gap-12">

@@ -8,6 +8,7 @@ export type SingleVariant = {
   rom?: string;
   processor?: string;
   price: number;
+  purchase_price: number;
 };
 
 interface KeyValuePair {

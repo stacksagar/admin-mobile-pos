@@ -36,7 +36,6 @@ export default function POSProducts({}: Props) {
       <BasicTable
         headers={[
           'Name',
-          'Barcode NO',
           'Quantity',
           'In Stock',
           'Purchase Price',
@@ -55,11 +54,11 @@ export default function POSProducts({}: Props) {
                     <p> Color: {product?.color} </p>
                     <p> RAM: {product?.ram} </p>
                     <p> ROM: {product?.rom} </p>
+                    <p> IMEI: {product?.imei} </p>
                   </>
                 ) : null}
               </div>
             </TableCell>
-            <TableCell>{product?.barcode}</TableCell>
             <TableCell>
               {product.with_variant ? (
                 <p> {product?.quantity} </p>

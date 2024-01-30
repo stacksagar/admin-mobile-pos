@@ -8,6 +8,7 @@ export type VariantOption = {
   index: number;
   title: string;
   price: number;
+  purchase_price: number;
   ram: string;
   rom: string;
   processor: string;
@@ -54,6 +55,7 @@ export default function SelectVariantAndQuantity({
             rom: selectedVO?.rom,
             processor: selectedVO?.processor,
             price: selectedVO?.price,
+            purchase_price: selectedVO?.purchase_price,
           });
         });
       }
