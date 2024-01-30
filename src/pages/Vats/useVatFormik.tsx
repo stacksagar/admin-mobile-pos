@@ -27,7 +27,7 @@ export default function useVatFormik({
   const formik = useFormik({
     initialValues: {
       name: '',
-      value: 0,
+      value: '',
       type: 'amount',
     },
 
@@ -60,7 +60,7 @@ export default function useVatFormik({
   useEffect(() => {
     formik.setValues({
       name: editItem?.name || '',
-      value: editItem?.value || 0,
+      value: editItem?.value?.toString() || '',
       type: editItem?.type || 'amount',
     });
   }, [editItem]);
@@ -87,7 +87,7 @@ export const VatForms = ({ formik }: { formik: any }) => (
         error={formik.errors.value}
       />
 
-      <div className="absolute top-4 right-10 flex h-fit items-center">
+      <div className="absolute right-10 top-4 flex h-fit items-center">
         {formik?.values?.type === 'amount' ? '৳' : '%'}
       </div>
     </div>

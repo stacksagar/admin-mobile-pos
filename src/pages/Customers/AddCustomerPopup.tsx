@@ -6,10 +6,15 @@ import useCustomerFormik, { CustomerForms } from './useCustomerFormik';
 interface Props {
   openModal: UseBoolean;
   editItem?: UserT;
+  _finally?: any;
 }
 
-export default function AddCustomerPopup({ openModal, editItem }: Props) {
-  const { formik } = useCustomerFormik({ openModal, editItem });
+export default function AddCustomerPopup({
+  openModal,
+  editItem,
+  _finally,
+}: Props) {
+  const { formik } = useCustomerFormik({ openModal, editItem, _finally });
 
   return (
     <MuiResponsiveDialog

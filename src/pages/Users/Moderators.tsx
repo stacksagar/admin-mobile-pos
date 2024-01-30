@@ -10,18 +10,15 @@ import AddEditUserPopup from './AddEditUserPopup';
 import { useEffect } from 'react';
 import { Button } from '@mui/material';
 import { UserT } from '../../data';
-import filterItems from '../../utils/filterItems';
-import useString from '../../hooks/state/useString';
-import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 
-export default function Users() {
+export default function Moderators() {
   const { showUserFormModal, selectedUser, setSelectedUser } = useGlobalState();
   const axios = useAxiosPrivate();
 
   const { data, refetch, isLoading } = useQuery<UserT[]>(
-    ['fetchUsers'],
+    ['fetchModerators'],
     async () => {
-      const { data } = await axios.get(`/auth/user/all`);
+      const { data } = await axios.get(`/auth/moderators/all`);
       return data || [];
     }
   );
@@ -46,25 +43,21 @@ export default function Users() {
     refetch();
   }, [showUserFormModal]);
 
-  const searchTerm = useString('');
-
   return (
     <div>
       <AddEditUserPopup editItem={selectedUser} openModal={showUserFormModal} />
-      <Breadcrumb pageName="Users" />
+
+      <Breadcrumb pageName="Moderatos & Admin" />
       <br />
 
       <div className="max-w-full overflow-hidden">
-        <div className="bg-white p-2">
-          <MuiTextField value={searchTerm.value} onChange={searchTerm.change} />
-        </div>
         <MuiTable
           onRefreshData={refetch}
           onDelete={onMultipleDelete}
           tableCells={usersTableCells}
-          rows={filterItems(data, searchTerm.value)}
+          rows={data || []}
           loading={isLoading}
-          tableTitle="Users"
+          tableTitle="Moderators"
           deleting={deleting}
           CustomButton={
             <Button

@@ -9,11 +9,7 @@ interface Props {
   _finally?: () => void;
 }
 
-export default function AddDiscountPopup({
-  openModal,
-  editItem,
-  _finally,
-}: Props) {
+export default function AddDiscountPopup({ openModal, editItem, _finally }: Props) {
   const { formik } = useDiscountFormik({ openModal, editItem, _finally });
 
   return (

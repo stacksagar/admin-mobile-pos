@@ -1,5 +1,4 @@
 import RenderCategoriesSelector from './RenderCategoriesSelector';
-import { useAppSelector } from '../../../app/store';
 import { useEffect, useState } from 'react';
 import MuiTextField from '../../../common/MaterialUi/Forms/MuiTextField';
 import useString from '../../../hooks/state/useString';
@@ -8,6 +7,7 @@ import convertToNestedCategories from '../../../app/features/products/convertToN
 import useBoolean from '../../../hooks/state/useBoolean';
 import Button from '../../../common/Buttons/Button';
 import { CategoryT } from '../../../data';
+import useCategories from '../../../hooks/react-query/useCategories';
 
 type Props = Omit<
   Omit<React.HTMLAttributes<HTMLInputElement>, 'onChange'>,
@@ -16,15 +16,17 @@ type Props = Omit<
   onChange: <T>(category: CategoryT) => T | void;
   defaultValue?: CategoryT;
   open?: boolean;
+  shouldRefetch?: boolean;
 };
 
 export default function CategoriesSelector({
   onChange,
   defaultValue,
   open,
+  shouldRefetch,
   ...props
 }: Props) {
-  const { data: categories } = useAppSelector((s) => s.products_categories);
+  const { categories, refetchCategories } = useCategories();
   const [selected, setSelected] = useState<CategoryT>({} as CategoryT);
 
   const textfield = useString('');
@@ -39,6 +41,10 @@ export default function CategoriesSelector({
   useEffect(() => {
     defaultValue && setSelected(defaultValue);
   }, [defaultValue]);
+
+  useEffect(() => {
+    refetchCategories();
+  }, [shouldRefetch]);
 
   return (
     <div className="relative">

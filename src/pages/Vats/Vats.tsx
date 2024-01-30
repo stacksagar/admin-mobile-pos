@@ -1,173 +1,78 @@
-import { useAppDispatch, useAppSelector } from '../../app/store';
-import MaterialTableServer from '../../common/MaterialUi/Table/MaterialTableServer';
-import { fetchVats } from '../../app/features/vats/requests';
-import { GridColDef } from '@mui/x-data-grid';
-import { Button } from '@mui/material';
-import useTableSelectAll from '../../hooks/table/useTableSelectAll';
-import useFetchWithPagination from '../../hooks/redux/useFetchWithPagination';
-import Breadcrumb from '../../components/Breadcrumb';
-import AddVatPopup from './AddVatPopup';
 import useBoolean from '../../hooks/state/useBoolean';
-import toast from '../../libs/toast';
-import error_message from '../../utils/error_message';
-import { axios_private } from '../../api/api';
-import MuiConfirmationDialog from '../../common/MaterialUi/Modal/MuiConfirmationDialog';
-import { removeVat, removeVats } from '../../app/features/vats/vatSlice';
-import { useState } from 'react'; 
-import isAmountOrPercent from '../../utils/isAmountOrPercent';
-import makeToSerialize from '../../utils/makeToSerialize';
+import toast_async from '../../utils/toast_async';
+import Breadcrumb from '../../components/Breadcrumb';
+import MuiTable from '../../common/MaterialUi/Table/MuiTable';
+import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import vatTableCells from './vatTableCells';
+import useVats from '../../hooks/react-query/useVats';
+import AddVatPopup from './AddVatPopup';
+import useObject from '../../hooks/state/useObject';
+import { VatT } from '../../data';
+import { Button } from '@mui/material';
 
 export default function Vats() {
-  const appDispatch = useAppDispatch();
-  const {
-    data: vats,
-    limit,
-    currentPage,
-    totalItems,
-    totalPages,
-    loading,
-  } = useAppSelector((s) => s.vats);
+  const axios = useAxiosPrivate();
 
-  const { changePage } = useFetchWithPagination({
-    data: vats,
-    fetchFunc: fetchVats,
-  });
+  const { vats, fetchingVats, refetchVats } = useVats();
 
-  const { selectedIds, onChangeSelected } = useTableSelectAll();
-  const [selectedID, setSelectedID] = useState<any>();
-  const [editItem, setEditItem] = useState<Vat>({} as Vat);
+  const deleting = useBoolean();
+  const showAddVatPopup = useBoolean();
+  const selectedItem = useObject({} as VatT);
 
-  const showAddVatPopup = useBoolean(false);
-
-  const showSelectedDeletePopup = useBoolean();
-  const selectedDeleting = useBoolean();
-
-  async function deleteMultipleItems() {
-    selectedDeleting.setTrue();
+  async function onMultipleDelete(ids: ID[]) {
+    deleting.setTrue();
     try {
-      await axios_private.delete('/vat/delete-multiples', {
-        data: { ids: selectedID || selectedIds },
-      });
-
-      selectedID
-        ? appDispatch(removeVat(selectedID))
-        : appDispatch(removeVats(selectedIds));
-
-      toast({ message: 'Successfully Deleted!' });
-    } catch (error) {
-      toast({
-        message: error_message(error),
+      await toast_async<any>(axios.delete('/vat/multiple', { data: { ids } }), {
+        start: 'Deleting.. wait a moment!',
+        success: `Successfully deleted ${ids?.length} items!`,
+        error: '',
       });
     } finally {
-      showSelectedDeletePopup.setFalse();
-      selectedDeleting.setFalse();
+      deleting.setFalse();
+      refetchVats();
     }
   }
 
-  const columns: GridColDef[] = [
-    { field: 'sl', headerName: 'SL', width: 100 },
-
-    { field: 'name', headerName: 'Vat Name', width: 200 },
-    {
-      field: 'value',
-      headerName: 'Vat Value',
-      width: 200,
-
-      renderCell(params) {
-        return (
-          <div>
-            {params?.row?.value} {isAmountOrPercent(params?.row?.type)}
-          </div>
-        );
-      },
-    },
-    { field: 'type', headerName: 'Vat By', width: 200 },
-
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      sortable: false,
-      filterable: false,
-      width: 400,
-
-      renderCell(params) {
-        return (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="contained"
-              title="Edit"
-              size="small"
-              onClick={() => {
-                showAddVatPopup.setTrue();
-                setEditItem(params.row);
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              title="Delete"
-              variant="contained"
-              size="small"
-              color="error"
-              onClick={() => {
-                setSelectedID(params?.id || '');
-                showSelectedDeletePopup.setTrue();
-              }}
-            >
-              Delete
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
-
   return (
     <div>
+      <br />
+
+      <AddVatPopup
+        openModal={showAddVatPopup}
+        editItem={selectedItem.data}
+        _finally={() => {
+          refetchVats();
+        }}
+      />
       <Breadcrumb pageName="Vats" />
 
-      <AddVatPopup openModal={showAddVatPopup} editItem={editItem} />
-
-      <MuiConfirmationDialog
-        loading={selectedDeleting.true}
-        showModal={showSelectedDeletePopup}
-        warningText={
-          selectedID
-            ? 'Want to delete vat?'
-            : `Want to delete all selected '${selectedIds?.length}' vats?`
-        }
-        onConfirm={deleteMultipleItems}
-        confirmButtonText={selectedID ? 'Delete' : 'Delete All'}
-      />
-
-      <MaterialTableServer
-        // -- data 
-        data={makeToSerialize(vats, currentPage, limit)}
-        filterKeys={['name']}
-        columns={columns}
-        onChangeSelected={onChangeSelected}
-        // -- pagination options
-        totalItems={totalItems}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        changePage={changePage}
-        limit={limit}
-        loading={loading}
-        // -- buttons/handlers
-        addNewText={'Add New Vat'}
-        addNewHandler={() => {
-          showAddVatPopup.setTrue();
-          setEditItem({} as Vat);
-        }}
-        // filterHandler={() => {}}
-        // downloadHandler={() => {}}
-
-        multipleDeleteHandler={() => {
-          setSelectedID(null);
-          showSelectedDeletePopup.setTrue();
-        }}
-        showMultipleDeleteHandler={selectedIds.length > 0}
-      />
+      <div className="max-w-full overflow-hidden">
+        <MuiTable
+          onRefreshData={refetchVats}
+          onDelete={onMultipleDelete}
+          tableCells={vatTableCells({
+            onEditBtnClick(v) {
+              selectedItem.set(v);
+              showAddVatPopup.setTrue();
+            },
+          })}
+          rows={vats || []}
+          loading={fetchingVats}
+          tableTitle="Vats"
+          deleting={deleting}
+          CustomButton={
+            <Button
+              onClick={() => {
+                showAddVatPopup?.toggle();
+                selectedItem.set({} as VatT);
+              }}
+              variant="contained"
+            >
+              Add Vat
+            </Button>
+          }
+        />
+      </div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function POSProducts({}: Props) {
       const sale_price = data?.sale_price || p?.sale_price;
       products.update(
         { ...p, sale_price, total_price: sale_price * p?.quantity },
-        'id'
+        p?.with_variant ? 'imei' : 'id'
       );
     };
   }
@@ -29,11 +29,6 @@ export default function POSProducts({}: Props) {
         'id'
       );
     };
-  }
-
-  function removePOSProduct(id?: number) {
-    if (!id) return;
-    products.remove(id);
   }
 
   return (
@@ -66,13 +61,17 @@ export default function POSProducts({}: Props) {
             </TableCell>
             <TableCell>{product?.barcode}</TableCell>
             <TableCell>
-              <ChangeNumberField
-                max={product?.in_stock}
-                defaultValue={product?.quantity || 1}
-                id={product?.id?.toString()}
-                handleSubmit={handleSubmitQuantity(product)}
-                keyName="quantity"
-              />
+              {product.with_variant ? (
+                <p> {product?.quantity} </p>
+              ) : (
+                <ChangeNumberField
+                  max={product?.in_stock}
+                  defaultValue={product?.quantity || 1}
+                  id={product?.id?.toString()}
+                  handleSubmit={handleSubmitQuantity(product)}
+                  keyName="quantity"
+                />
+              )}
             </TableCell>
 
             <TableCell>{product?.in_stock}</TableCell>
@@ -91,7 +90,11 @@ export default function POSProducts({}: Props) {
                 variant="contained"
                 size="small"
                 color="error"
-                onClick={() => removePOSProduct(product?.id)}
+                onClick={() =>
+                  product?.with_variant
+                    ? products.remove('imei', product?.imei)
+                    : products.removeById(product?.id)
+                }
               >
                 Delete
               </Button>

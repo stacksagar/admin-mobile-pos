@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import { UserT } from '../../data';
 import { useGlobalState } from '../../context/globalState';
 import FIcon from '../../common/Icons/FIcon';
+import { Link, useLocation } from 'react-router-dom';
 
 const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
   {
@@ -50,6 +51,7 @@ const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
   {
     key: 'actions',
     ActionButtons({ row }) {
+      const location = useLocation();
       const { showUserFormModal, setSelectedUser } = useGlobalState();
 
       return (
@@ -65,6 +67,15 @@ const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
           >
             Edit
           </Button>
+
+          {location.pathname?.includes('moderators') ? (
+            <Link to={`/moderators/permissions?id=${row?.id}`}>
+              <Button variant="contained" size="small" color="warning">
+                {' '}
+                Permissions{' '}
+              </Button>
+            </Link>
+          ) : null}
         </>
       );
     },

@@ -16,7 +16,7 @@ type Props = {
   _finally?: () => void;
 };
 
-export default function useVatFormik({
+export default function useDiscountFormik({
   openModal,
   editItem,
   avoidUpdateToast,
@@ -27,7 +27,7 @@ export default function useVatFormik({
   const formik = useFormik({
     initialValues: {
       name: '',
-      value: 0,
+      value: '',
       type: 'amount',
     },
 
@@ -60,7 +60,7 @@ export default function useVatFormik({
   useEffect(() => {
     formik.setValues({
       name: editItem?.name || '',
-      value: editItem?.value || 0,
+      value: editItem?.value?.toString() || '',
       type: editItem?.type || 'amount',
     });
   }, [editItem]);
@@ -87,17 +87,17 @@ export const DiscountForms = ({ formik }: { formik: any }) => (
         error={formik.errors.value}
       />
 
-      <div className="absolute top-4 right-10 flex h-fit items-center">
+      <div className="absolute right-10 top-4 flex h-fit items-center">
         {formik?.values?.type === 'amount' ? '৳' : '%'}
       </div>
     </div>
 
     <FormControl fullWidth>
-      <InputLabel id="discount-by-label">Vat By</InputLabel>
+      <InputLabel id="disc-by-label">Discount By</InputLabel>
       <Select
-        labelId="discount-by-label"
+        labelId="disc-by-label"
         id="discount-by"
-        label="Vat By"
+        label="Discount By"
         {...formik.getFieldProps('type')}
       >
         <MenuItem value="percentage">By Percentage (%) </MenuItem>

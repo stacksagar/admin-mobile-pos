@@ -5,11 +5,14 @@ import MuiTable from '../../common/MaterialUi/Table/MuiTable';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import saleTableCells from './saleTableCells';
 import useSales from '../../hooks/react-query/useSales';
-import { SaleT } from '../../data';
+import { SaleT, UserT } from '../../data';
 import error_message from '../../utils/error_message';
 import toast from '../../libs/toast';
 import MuiConfirmationDialog from '../../common/MaterialUi/Modal/MuiConfirmationDialog';
 import { useState } from 'react';
+import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
+import useObject from '../../hooks/state/useObject';
+import useCustomers from '../../hooks/react-query/useCustomers';
 
 export default function Sales() {
   const axios = useAxiosPrivate();
@@ -78,6 +81,9 @@ export default function Sales() {
     showReturnWarning.toggle();
   }
 
+  const { customers } = useCustomers();
+  const selectedCustomer = useObject({} as UserT);
+
   return (
     <div>
       <br />
@@ -94,11 +100,27 @@ export default function Sales() {
       />
 
       <div className="max-w-full overflow-hidden">
+        <div className="rounded bg-white p-2">
+          <MuiSearchSelect
+            label={selectedCustomer?.data?.name || 'Select Customer'}
+            defaultTitle={selectedCustomer?.data?.name || null}
+            options={customers || []}
+            titleKey="name"
+            onChange={selectedCustomer.set}
+          />
+        </div>
         <MuiTable
           onRefreshData={refetchSales}
           onDelete={onMultipleDelete}
           tableCells={saleTableCells(handleReturnButton)}
-          rows={sales || []}
+          // rows={sales || []}
+          rows={
+            (selectedCustomer?.data?.id
+              ? sales?.filter(
+                  (item) => item.customerId === selectedCustomer?.data?.id
+                )
+              : sales) || []
+          }
           loading={fetchingSales}
           tableTitle="Sales"
           deleting={deleting}

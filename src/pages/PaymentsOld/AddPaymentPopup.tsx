@@ -76,9 +76,7 @@ export default function AddPaymentPopup({
       wallet: editItem?.wallet || '',
       logo: editItem?.logo || '',
     });
-    description?.current &&
-      description?.current?.setContents &&
-      description?.current?.setContents(editItem?.description || '');
+    description?.current?.setContents(editItem?.description || '');
   }, [editItem]);
 
   return (

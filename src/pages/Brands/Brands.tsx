@@ -3,28 +3,27 @@ import toast_async from '../../utils/toast_async';
 import Breadcrumb from '../../components/Breadcrumb';
 import MuiTable from '../../common/MaterialUi/Table/MuiTable';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import paymentTableCells from './paymentTableCells';
-import AddPaymentPopup from './AddPaymentPopup';
+import brandTableCells from './brandTableCells';
+import AddBrandPopup from './AddBrandPopup';
 import useObject from '../../hooks/state/useObject';
-import { PaymentT } from '../../data';
+import { BrandT } from '../../data';
 import { Button } from '@mui/material';
-import usePaymentMethods from '../../hooks/react-query/usePaymentMethods';
+import useBrands from '../../hooks/react-query/useBrands';
 
-export default function Payments() {
+export default function Brands() {
   const axios = useAxiosPrivate();
 
-  const { paymentMethods, refetchMethods, fetchingMethods } =
-    usePaymentMethods();
+  const { brands, fetchingBrands, refetchBrands } = useBrands();
 
   const deleting = useBoolean();
-  const showAddPaymentPopup = useBoolean();
-  const selectedItem = useObject({} as PaymentT);
+  const showAddBrandPopup = useBoolean();
+  const selectedItem = useObject({} as BrandT);
 
   async function onMultipleDelete(ids: ID[]) {
     deleting.setTrue();
     try {
       await toast_async<any>(
-        axios.delete('/payment/multiple', { data: { ids } }),
+        axios.delete('/brand/multiple', { data: { ids } }),
         {
           start: 'Deleting.. wait a moment!',
           success: `Successfully deleted ${ids?.length} items!`,
@@ -33,7 +32,7 @@ export default function Payments() {
       );
     } finally {
       deleting.setFalse();
-      refetchMethods();
+      refetchBrands();
     }
   }
 
@@ -41,38 +40,36 @@ export default function Payments() {
     <div>
       <br />
 
-      <AddPaymentPopup
-        openModal={showAddPaymentPopup}
+      <AddBrandPopup
+        openModal={showAddBrandPopup}
         editItem={selectedItem.data}
-        _finally={() => {
-          refetchMethods();
-        }}
+        _finally={refetchBrands}
       />
-      <Breadcrumb pageName="Payments" />
+      <Breadcrumb pageName="Brands" />
 
       <div className="max-w-full overflow-hidden">
         <MuiTable
-          onRefreshData={refetchMethods}
+          onRefreshData={refetchBrands}
           onDelete={onMultipleDelete}
-          tableCells={paymentTableCells({
+          tableCells={brandTableCells({
             onEditBtnClick(b) {
               selectedItem.set(b);
-              showAddPaymentPopup.setTrue();
+              showAddBrandPopup.setTrue();
             },
           })}
-          rows={paymentMethods || []}
-          loading={fetchingMethods}
-          tableTitle="Payments"
+          rows={brands || []}
+          loading={fetchingBrands}
+          tableTitle="Brands"
           deleting={deleting}
           CustomButton={
             <Button
               onClick={() => {
-                showAddPaymentPopup?.toggle();
-                selectedItem.set({} as PaymentT);
+                showAddBrandPopup?.toggle();
+                selectedItem.set({} as BrandT);
               }}
               variant="contained"
             >
-              Add Payment
+              Add Brand
             </Button>
           }
         />

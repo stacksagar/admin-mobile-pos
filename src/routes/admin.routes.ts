@@ -3,6 +3,7 @@ import { lazy } from 'react';
 const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
 const EditProfile = lazy(() => import('../pages/EditProfile'));
 const Users = lazy(() => import('../pages/Users/Users'));
+const Moderators = lazy(() => import('../pages/Users/Moderators'));
 
 const AddAndEditProduct = lazy(
   () => import('../pages/Products/AddAndEditProduct')
@@ -52,6 +53,9 @@ const SupplierHistories = lazy(
 
 const Settings = lazy(() => import('../pages/Settings/Settings'));
 const Warranties = lazy(() => import('../pages/Warranties/Warranties'));
+const WarrantyInvoice = lazy(
+  () => import('../pages/WarrantyInvoice/WarrantyInvoice')
+);
 const WarrantyPOS = lazy(() => import('../pages/WarrantyPOS/WarrantyPOS'));
 const WarrantyDashboard = lazy(
   () => import('../pages/WarrantyDashboard/WarrantyDashboard')
@@ -61,11 +65,13 @@ const ChangePassword = lazy(
   () => import('../pages/Authentication/ChangePassword')
 );
 const BarcodePrint = lazy(() => import('../pages/BarcodePrint/BarcodePrint'));
+const Brands = lazy(() => import('../pages/Brands/Brands'));
 
 const admin_pages = {
   '/': Dashboard,
   'edit-profile': EditProfile,
   users: Users,
+  moderators: Moderators,
   products: Products,
   'stock-out-products': StockOutProducts,
   'add-product': AddAndEditProduct,
@@ -93,8 +99,10 @@ const admin_pages = {
   settings: Settings,
   warranties: Warranties,
   'warranty-pos': WarrantyPOS,
+  'warranty-invoice': WarrantyInvoice,
   'warranty-dashboard': WarrantyDashboard,
   'barcode-print': BarcodePrint,
+  brands: Brands,
 };
 
 export default admin_pages;

@@ -101,14 +101,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               icon="calendar"
               items={[
                 {
-                  to: '/warranty-pos',
-                  title: 'Warranty POS',
-                  icon: 'calendar-alt',
-                },
-                {
                   to: '/warranty-dashboard',
                   title: 'W. Dashboard',
                   icon: 'calendar',
+                },
+                {
+                  to: '/warranty-pos',
+                  title: 'Warranty POS',
+                  icon: 'calendar-alt',
                 },
                 {
                   to: '/warranties',
@@ -177,7 +177,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 },
                 {
                   to: '/vats',
-                  title: 'Vat',
+                  title: 'Vats',
+                  icon: 'v',
+                },
+                {
+                  to: '/brands',
+                  title: 'Brands',
                   icon: 'v',
                 },
                 {
@@ -189,6 +194,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to: '/users',
                   title: 'Users',
                   icon: 'users',
+                },
+                {
+                  to: '/moderators',
+                  title: 'Moderators',
+                  icon: 'user-cog',
                 },
 
                 {

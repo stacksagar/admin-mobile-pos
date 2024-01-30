@@ -6,7 +6,8 @@ export default function AccessDenied() {
 
   useEffect(() => {
     logout();
-  }, [logout]);
+  }, []);
+
   return (
     <div className="mx-auto max-w-screen-2xl">
       <div className="flex min-h-screen w-full items-center">

@@ -22,9 +22,14 @@ import { CategoryT } from '../../../data';
 interface Props {
   openModal: UseBoolean;
   editItem?: CategoryT;
+  _finally?: () => void;
 }
 
-export default function AddOrEditCategory({ openModal, editItem }: Props) {
+export default function AddOrEditCategory({
+  openModal,
+  editItem,
+  _finally,
+}: Props) {
   const axios = useAxiosPrivate();
   const dispatch = useAppDispatch();
   const { data: categories } = useAppSelector((s) => s.products_categories);
@@ -84,6 +89,7 @@ export default function AddOrEditCategory({ openModal, editItem }: Props) {
       } finally {
         openModal.setFalse();
         formik.setSubmitting(false);
+        _finally && _finally();
       }
     },
   });

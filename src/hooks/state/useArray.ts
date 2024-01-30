@@ -15,7 +15,10 @@ const useArray = <T>(defaultData?: T[]) => {
         prev.map((item) => (item[key] === newObject[key] ? newObject : item))
       ),
 
-    remove: (id: number) =>
+    remove: (key: keyof T, value: any) =>
+      setData((prev) => prev.filter((item: any) => item[key] !== value)),
+
+    removeById: (id?: number) =>
       setData((prev) => prev.filter((item: any) => item?.id !== id)),
 
     loading,

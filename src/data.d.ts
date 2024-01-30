@@ -21,12 +21,32 @@ interface Common {
   updatedAt?: string;
 }
 
-interface WarrantyT extends Common {
-  name: string;
+export interface WarrantyT extends Common {
+  customer: UserT;
+  brand: BrandT;
+  product: ProductT;
+  category: CategoryT;
+
+  customerId: number;
+  brandId: number;
+  productId: number;
+  categoryId: number;
+  receive_date: string;
+  delivery_date: string;
+  delivery_fee: number;
+  warranty_fee: number;
+  advance_amount: number;
+  due_amount: number;
+  description: string;
+  status: 'courier' | 'received' | 'delivery' | 'success';
 }
 
 interface BrandT extends Common {
   name: string;
+}
+
+export interface PermissionT extends Common {
+  values: string[];
 }
 
 interface DiscountT extends Common {
@@ -123,6 +143,8 @@ interface UserT extends Common {
 
   histories?: SellHistoryT[];
   purchase_histories?: SupplierHistoryT[];
+  permission?: PermissionT;
+  permissionId?: number;
 }
 
 export interface SellHistoryT extends Common {

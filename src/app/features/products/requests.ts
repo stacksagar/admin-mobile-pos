@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { axios_private } from '../../../api/api';
 
 export const fetchStockInProducts = createAsyncThunk(
-  'expenses/fetchStockInProducts',
+  'products/fetchStockInProducts',
   async (params?: any) => {
     const { data } = await axios_private.get(`/product/stock-in`, {
       params,
@@ -12,7 +12,7 @@ export const fetchStockInProducts = createAsyncThunk(
 );
 
 export const fetchStockOutProducts = createAsyncThunk(
-  'expenses/fetchStockOutProducts',
+  'products/fetchStockOutProducts',
   async (params?: any) => {
     const { data } = await axios_private.get(`/product/stock-out`, {
       params,
@@ -22,7 +22,7 @@ export const fetchStockOutProducts = createAsyncThunk(
 );
 
 export const fetchProductsCategories = createAsyncThunk(
-  'expenses/fetchProductsCategories',
+  'products/fetchProductsCategories',
   async (params?: any) => {
     const { data } = await axios_private.get(`/product/category/all`, {
       params,

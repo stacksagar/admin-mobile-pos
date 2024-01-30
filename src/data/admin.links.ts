@@ -1,0 +1,27 @@
+const admin_links: { link: string }[] = [
+  { link: '/' },
+  { link: '/pos' },
+  { link: '/sales' },
+  { link: '/suppliers' },
+  { link: '/supplier-purchase-history' },
+  { link: '/warranty-dashboard' },
+  { link: '/warranty-pos' },
+  { link: '/warranties' },
+  { link: '/barcode-print' },
+  { link: '/products-categories' },
+  { link: '/products' },
+  { link: '/expenses-categories' },
+  { link: '/expenses' },
+  { link: '/orders' },
+  { link: '/pages' },
+  { link: '/payments' },
+  { link: '/discounts' },
+  { link: '/vats' },
+  { link: '/brands' },
+  { link: '/customers' },
+  { link: '/users' },
+  { link: '/moderators' },
+  { link: '/stock-out-products' },
+];
+
+export default admin_links;
