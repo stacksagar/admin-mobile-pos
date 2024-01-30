@@ -1,169 +1,79 @@
-import { useAppDispatch, useAppSelector } from '../../app/store';
-import MaterialTableServer from '../../common/MaterialUi/Table/MaterialTableServer';
-import { fetchExpenses } from '../../app/features/expenses/requests';
-import { GridColDef } from '@mui/x-data-grid';
-import { Button } from '@mui/material';
-import useTableSelectAll from '../../hooks/table/useTableSelectAll';
-import useFetchWithPagination from '../../hooks/redux/useFetchWithPagination';
-import Breadcrumb from '../../components/Breadcrumb';
-import AddExpensePopup from './AddExpensePopup';
 import useBoolean from '../../hooks/state/useBoolean';
-import toast from '../../libs/toast';
-import error_message from '../../utils/error_message';
-import { axios_private } from '../../api/api';
-import MuiConfirmationDialog from '../../common/MaterialUi/Modal/MuiConfirmationDialog';
-import {
-  removeExpense,
-  removeExpenses,
-} from '../../app/features/expenses/expenseSlice';
-import { useState } from 'react';
-import { showDate } from '../../utils/date';
-import makeToSerialize from '../../utils/makeToSerialize';
+import toast_async from '../../utils/toast_async';
+import Breadcrumb from '../../components/Breadcrumb';
+import MuiTable from '../../common/MaterialUi/Table/MuiTable';
+import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import expenseTableCells from './expenseTableCells';
+import AddExpensePopup from './AddExpensePopup';
+import useObject from '../../hooks/state/useObject';
+import { ExpenseT } from '../../data';
+import { Button } from '@mui/material';
+import useExpenses from '../../hooks/react-query/useExpenses';
 
 export default function Expenses() {
-  const appDispatch = useAppDispatch();
-  const {
-    data: expenses,
-    limit,
-    currentPage,
-    totalItems,
-    totalPages,
-    loading,
-  } = useAppSelector((s) => s.expenses);
+  const axios = useAxiosPrivate();
 
-  const { changePage } = useFetchWithPagination({
-    data: expenses,
-    fetchFunc: fetchExpenses,
-  });
+  const { expenses, fetchingExpenses, refetchExpenses } = useExpenses();
 
-  const { selectedIds, onChangeSelected } = useTableSelectAll();
-  const [selectedID, setSelectedID] = useState<any>();
-  const [editItem, setEditItem] = useState<Expense>({} as Expense);
+  const deleting = useBoolean();
+  const showAddExpensePopup = useBoolean();
+  const selectedItem = useObject({} as ExpenseT);
 
-  const showAddExpensePopup = useBoolean(false);
-
-  const showSelectedDeletePopup = useBoolean();
-  const selectedDeleting = useBoolean();
-  async function deleteMultipleItems() {
-    selectedDeleting.setTrue();
+  async function onMultipleDelete(ids: ID[]) {
+    deleting.setTrue();
     try {
-      await axios_private.delete('/expense/delete-multiples', {
-        data: { ids: selectedID || selectedIds },
-      });
-
-      selectedID
-        ? appDispatch(removeExpense(selectedID))
-        : appDispatch(removeExpenses(selectedIds));
-
-      toast({ message: 'Successfully Deleted!' });
-    } catch (error) {
-      toast({
-        message: error_message(error),
-      });
+      await toast_async<any>(
+        axios.delete('/expense/multiple', { data: { ids } }),
+        {
+          start: 'Deleting.. wait a moment!',
+          success: `Successfully deleted ${ids?.length} items!`,
+          error: '',
+        }
+      );
     } finally {
-      showSelectedDeletePopup.setFalse();
-      selectedDeleting.setFalse();
+      deleting.setFalse();
+      refetchExpenses();
     }
   }
 
-  const columns: GridColDef[] = [
-    { field: 'sl', headerName: 'SL', width: 10 },
-    {
-      field: 'date',
-      headerName: 'Expense Date',
-      renderCell(params) {
-        return <div> {showDate(params.row?.date, true)} </div>;
-      },
-    },
-    { field: 'name', headerName: 'Expense Name', width: 200 },
-    { field: 'category', headerName: 'Expense Category', width: 200 },
-    { field: 'cost', headerName: 'Total Cost', width: 200 },
-
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      sortable: false,
-      filterable: false,
-      width: 200,
-
-      renderCell(params) {
-        return (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="contained"
-              title="Edit"
-              size="small"
-              onClick={() => {
-                showAddExpensePopup.setTrue();
-                setEditItem(params.row);
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              title="Delete"
-              variant="contained"
-              size="small"
-              color="error"
-              onClick={() => {
-                setSelectedID(params?.id || '');
-                showSelectedDeletePopup.setTrue();
-              }}
-            >
-              Delete
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
-
   return (
     <div>
+      <br />
+
+      <AddExpensePopup
+        openModal={showAddExpensePopup}
+        editItem={selectedItem.data}
+        _finally={refetchExpenses}
+      />
       <Breadcrumb pageName="Expenses" />
 
-      <AddExpensePopup openModal={showAddExpensePopup} editItem={editItem} />
-
-      <MuiConfirmationDialog
-        loading={selectedDeleting.true}
-        showModal={showSelectedDeletePopup}
-        warningText={
-          selectedID
-            ? 'Want to delete expense?'
-            : `Want to delete all selected '${selectedIds?.length}' expenses?`
-        }
-        onConfirm={deleteMultipleItems}
-        confirmButtonText={selectedID ? 'Delete' : 'Delete All'}
-      />
-
-      <MaterialTableServer
-        // -- data
-        data={makeToSerialize(expenses, currentPage, limit)}
-        filterKeys={['name', 'email']}
-        columns={columns}
-        onChangeSelected={onChangeSelected}
-        // -- pagination options
-        totalItems={totalItems}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        changePage={changePage}
-        limit={limit}
-        loading={loading}
-        // -- buttons/handlers
-        addNewText={'Add New Expense'}
-        addNewHandler={() => {
-          showAddExpensePopup.setTrue();
-          setEditItem({} as Expense);
-        }}
-        // filterHandler={() => {}}
-        // downloadHandler={() => {}}
-
-        multipleDeleteHandler={() => {
-          setSelectedID(null);
-          showSelectedDeletePopup.setTrue();
-        }}
-        showMultipleDeleteHandler={selectedIds.length > 0}
-      />
+      <div className="max-w-full overflow-hidden">
+        <MuiTable
+          onRefreshData={refetchExpenses}
+          onDelete={onMultipleDelete}
+          tableCells={expenseTableCells({
+            onEditBtnClick(b) {
+              selectedItem.set(b);
+              showAddExpensePopup.setTrue();
+            },
+          })}
+          rows={expenses || []}
+          loading={fetchingExpenses}
+          tableTitle="Expenses"
+          deleting={deleting}
+          CustomButton={
+            <Button
+              onClick={() => {
+                showAddExpensePopup?.toggle();
+                selectedItem.set({} as ExpenseT);
+              }}
+              variant="contained"
+            >
+              Add Expense
+            </Button>
+          }
+        />
+      </div>
     </div>
   );
 }

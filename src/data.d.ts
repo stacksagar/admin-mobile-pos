@@ -65,7 +65,7 @@ interface ExpenseT extends Common {
   name?: string;
   date?: string;
   cost?: number;
-  category?: CategoryT;
+  category?: string;
 }
 
 interface PaymentT extends Common {
@@ -82,6 +82,7 @@ interface SaleT extends Common {
   vat: number;
   quantity: number;
   total: number;
+  total_purchase_cost: number;
   method: string;
   with_variant?: boolean;
   properties?: {
@@ -134,7 +135,6 @@ interface UserT extends Common {
   picture?: string;
   address?: string;
   nid?: any;
-  permissions?: any;
   due?: number;
   paid?: number;
   total_puchase_amount?: number;

@@ -4,6 +4,9 @@ const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
 const EditProfile = lazy(() => import('../pages/EditProfile'));
 const Users = lazy(() => import('../pages/Users/Users'));
 const Moderators = lazy(() => import('../pages/Users/Moderators'));
+const ModeratorPermissions = lazy(
+  () => import('../pages/Users/ModeratorPermissions')
+);
 
 const AddAndEditProduct = lazy(
   () => import('../pages/Products/AddAndEditProduct')
@@ -72,6 +75,7 @@ const admin_pages = {
   'edit-profile': EditProfile,
   users: Users,
   moderators: Moderators,
+  'moderators/permissions': ModeratorPermissions,
   products: Products,
   'stock-out-products': StockOutProducts,
   'add-product': AddAndEditProduct,

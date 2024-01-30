@@ -5,7 +5,7 @@ import useBoolean from '../../hooks/state/useBoolean';
 import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ProductT, ProductVariant, SingleVariant } from '../../data';
 import useCustomers from '../../hooks/react-query/useCustomers';
 import useProducts from '../../hooks/react-query/useProducts';
@@ -40,8 +40,9 @@ export default function POSHeaderSelector({}: Props) {
   function handleWithScan(code: string) {
     setBarcode(code);
     const product = products.find((p) => p.barcode?.trim() === code?.trim());
-    if (product?.id) {
+    if (product?.id && code) {
       setBarcode('');
+      addWithoutVariantProduct(product);
     }
   }
 
@@ -110,16 +111,13 @@ export default function POSHeaderSelector({}: Props) {
     });
   }
 
-  useEffect(() => {
-    console.log('pos_products ', pos_products);
-  }, [pos_products]);
-
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:gap-6 xl:gap-12">
       <div className="flex items-center gap-2">
         <div className="mt-2">
           <MuiTextField
             value={barcode}
+            // onChange={(e) => setBarcode(e.target.value)}
             onChange={(e) => handleWithScan(e.target.value)}
             label="Scan Barcode"
           />

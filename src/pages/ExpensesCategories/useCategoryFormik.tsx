@@ -5,21 +5,24 @@ import { UseBoolean } from '../../hooks/state/useBoolean';
 import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch, useAppSelector } from '../../app/store';
 import {
-  addExpenseCategory,
-  updateExpenseCategory,
-} from '../../app/features/expenses/expensesCategoriesSlice';
+  addExpense,
+  updateExpense,
+} from '../../app/features/expenses/expenseSlice';
+import useFetchDispatch from '../../hooks/redux/useFetchDispatch';
+import { fetchExpensesCategories } from '../../app/features/expenses/requests';
+import { CategoryT } from '../../data';
 
 type Props = {
   openModal?: UseBoolean;
-  editItem?: ExpenseCategory;
+  editItem?: CategoryT;
   avoidUpdateToast?: boolean;
-  _onSuccessAdd?: (supplier: ExpenseCategory) => void;
+  _onSuccessAdd?: (expense: CategoryT) => void;
   _finally?: () => void;
 };
 
-export default function useExpenseCategoryFormik({
+export default function useCategoryFormik({
   openModal,
   editItem,
   avoidUpdateToast,
@@ -41,14 +44,17 @@ export default function useExpenseCategoryFormik({
             `/expense-category/${editItem.id}`,
             values
           );
-          data?.category && dispatch(updateExpenseCategory(data?.category));
-          !avoidUpdateToast && toast({ message: 'Category Updated!' });
+          data?.expense && dispatch(updateExpense(data?.expense));
+          !avoidUpdateToast && toast({ message: 'Expense Updated!' });
         } else {
-          const { data } = await axios.post('/expense-category', values);
-          if (data?.category) {
-            dispatch(addExpenseCategory(data?.category));
-            _onSuccessAdd && _onSuccessAdd(data?.category);
-            toast({ message: 'New Category Added!' });
+          const { data } = await axios.post('/expense-category', {
+            ...values,
+            slug: values?.name?.toLocaleLowerCase()?.split(' ').join('-'),
+          });
+          if (data?.expense) {
+            dispatch(addExpense(data?.expense));
+            _onSuccessAdd && _onSuccessAdd(data?.expense);
+            toast({ message: 'New Expense Added!' });
           }
         }
       } catch (error) {
@@ -66,6 +72,7 @@ export default function useExpenseCategoryFormik({
   });
 
   useEffect(() => {
+    if (!editItem) return;
     formik.setValues({
       name: editItem?.name || '',
     });
@@ -74,15 +81,17 @@ export default function useExpenseCategoryFormik({
   return { formik };
 }
 
-export const ExpenseCategoryForms = ({ formik }: { formik: any }) => (
-  <div className="flex flex-col gap-6">
-    <MuiTextField
-      required
-      id="name"
-      label="Category Name"
-      {...formik.getFieldProps('name')}
-      touched={formik.touched.name}
-      error={formik.errors.name}
-    />
-  </div>
-);
+export const ExpenseForms = ({ formik }: { formik: any }) => {
+  const { data: categories } = useAppSelector((s) => s.expenses_categories);
+
+  useFetchDispatch({
+    data: categories,
+    fetchFunc: fetchExpensesCategories,
+  });
+
+  return (
+    <div className="flex flex-col gap-6">
+      <MuiTextField label="Category Name" {...formik.getFieldProps('name')} />
+    </div>
+  );
+};

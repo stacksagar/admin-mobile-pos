@@ -1,30 +1,29 @@
 import MuiResponsiveDialog from '../../common/MaterialUi/Modal/MuiResponsiveDialog';
+import { CategoryT } from '../../data';
 import { UseBoolean } from '../../hooks/state/useBoolean';
-import useExpenseCategoryFormik, {
-  ExpenseCategoryForms,
-} from './useExpenseCategoryFormik';
+import useCategoryFormik, { ExpenseForms } from './useCategoryFormik';
 
 interface Props {
   openModal: UseBoolean;
-  editItem?: ExpenseCategory;
+  editItem?: CategoryT;
+  _finally?: () => void;
 }
 
-export default function AddExpenseCategoryPopup({
+export default function AddCategoryPopup({
   openModal,
   editItem,
+  _finally,
 }: Props) {
-  const { formik } = useExpenseCategoryFormik({ openModal, editItem });
+  const { formik } = useCategoryFormik({ openModal, editItem, _finally });
 
   return (
     <MuiResponsiveDialog
       handleSubmit={formik.handleSubmit}
-      title={
-        editItem?.id ? 'Update ExpenseCategory' : 'Add New ExpenseCategory'
-      }
+      title={editItem?.id ? 'Update Expense' : 'Add New Expense'}
       openModal={openModal}
       loading={formik.isSubmitting}
     >
-      <ExpenseCategoryForms formik={formik} />
+      <ExpenseForms formik={formik} />
     </MuiResponsiveDialog>
   );
 }

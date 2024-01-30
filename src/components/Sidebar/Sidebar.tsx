@@ -158,8 +158,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               ]}
             />
 
-            <SidebarItem to="/orders" title="Orders" icon="list-ol" />
-            <SidebarItem to="/pages" title="Pages" icon="file" />
+            {/* <SidebarItem to="/orders" title="Orders" icon="list-ol" /> */}
+            {/* <SidebarItem to="/pages" title="Pages" icon="file" /> */}
 
             <SidebarItemGroup
               title="Management"

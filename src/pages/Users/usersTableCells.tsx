@@ -37,17 +37,32 @@ const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
   },
 
   {
-    key: 'address',
-  },
-
-  {
     key: 'email',
+    label: 'Contacts',
+    RenderComponent({ row }) {
+      return (
+        <div>
+          <p> {row?.email} </p>
+          <p> {row?.phone} </p>
+          <p className="max-w-[220px]"> Address: {row?.address || ' - '} </p>
+        </div>
+      );
+    },
   },
 
   {
-    key: 'phone',
+    key: 'role',
+    RenderComponent({ row }) {
+      return (
+        <div>
+          <p className="font-semibold capitalize text-pink-600">
+            {' '}
+            {row?.role}{' '}
+          </p>
+        </div>
+      );
+    },
   },
-
   {
     key: 'actions',
     ActionButtons({ row }) {

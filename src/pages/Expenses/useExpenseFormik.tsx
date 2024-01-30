@@ -5,20 +5,15 @@ import { UseBoolean } from '../../hooks/state/useBoolean';
 import { useEffect } from 'react';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useAppDispatch, useAppSelector } from '../../app/store';
-import {
-  addExpense,
-  updateExpense,
-} from '../../app/features/expenses/expenseSlice';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
-import useFetchDispatch from '../../hooks/redux/useFetchDispatch';
-import { fetchExpensesCategories } from '../../app/features/expenses/requests';
+import { ExpenseT } from '../../data';
+import useExpenseCategories from '../../hooks/react-query/useExpenseCategories';
 
 type Props = {
   openModal?: UseBoolean;
-  editItem?: Expense;
+  editItem?: ExpenseT;
   avoidUpdateToast?: boolean;
-  _onSuccessAdd?: (expense: Expense) => void;
+  _onSuccessAdd?: (expense: ExpenseT) => void;
   _finally?: () => void;
 };
 
@@ -30,7 +25,6 @@ export default function useExpenseFormik({
   _finally,
 }: Props) {
   const axios = useAxiosPrivate();
-  const dispatch = useAppDispatch();
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -43,13 +37,11 @@ export default function useExpenseFormik({
       formik.setSubmitting(true);
       try {
         if (editItem?.id) {
-          const { data } = await axios.put(`/expense/${editItem.id}`, values);
-          data?.expense && dispatch(updateExpense(data?.expense));
+          await axios.put(`/expense/${editItem.id}`, values);
           !avoidUpdateToast && toast({ message: 'Expense Updated!' });
         } else {
           const { data } = await axios.post('/expense', values);
           if (data?.expense) {
-            dispatch(addExpense(data?.expense));
             _onSuccessAdd && _onSuccessAdd(data?.expense);
             toast({ message: 'New Expense Added!' });
           }
@@ -72,7 +64,7 @@ export default function useExpenseFormik({
     if (!editItem) return;
     formik.setValues({
       name: editItem?.name || '',
-      category: editItem?.category || '',
+      category: editItem?.category || ('' as any),
       cost: editItem?.cost || 0,
       date: editItem?.date || new Date().toISOString().split('T')[0],
     });
@@ -82,12 +74,7 @@ export default function useExpenseFormik({
 }
 
 export const ExpenseForms = ({ formik }: { formik: any }) => {
-  const { data: categories } = useAppSelector((s) => s.expenses_categories);
-
-  useFetchDispatch({
-    data: categories,
-    fetchFunc: fetchExpensesCategories,
-  });
+  const { categories } = useExpenseCategories();
 
   return (
     <div className="flex flex-col gap-6">

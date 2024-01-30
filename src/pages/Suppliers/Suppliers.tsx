@@ -10,12 +10,9 @@ import AddEditSupplierPopup from './AddEditSupplierPopup';
 import { useEffect } from 'react';
 import { Button } from '@mui/material';
 import { SupplierT } from '../../data';
-import SupplierHistories from './SupplierHistories';
-import MuiContentModal from '../../common/MaterialUi/Modal/MuiContentModal';
 
 export default function Users() {
-  const { selectedItem, setSelectedItem, selectedID, isShow, isShow2 } =
-    useGlobalState();
+  const { selectedItem, setSelectedItem, isShow2 } = useGlobalState();
   const axios = useAxiosPrivate();
 
   const { data, refetch, isLoading } = useQuery<SupplierT[]>(
@@ -49,10 +46,6 @@ export default function Users() {
     refetch();
   }, [isShow2]);
 
-  useEffect(() => {
-    console.log('selectedItem ', selectedItem);
-  }, [selectedItem]);
-
   return (
     <div>
       <AddEditSupplierPopup openModal={isShow2} editItem={selectedItem} />
@@ -60,10 +53,6 @@ export default function Users() {
       <br />
 
       <Breadcrumb pageName="Suppliers" />
-
-      <MuiContentModal title={'Supplier Purchase Histories'} openModal={isShow}>
-        <SupplierHistories supplierID={selectedID} />
-      </MuiContentModal>
 
       <div className="max-w-full overflow-hidden">
         <MuiTable

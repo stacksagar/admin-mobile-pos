@@ -88,6 +88,8 @@ export default function PosFooter() {
           vat: vat_amount.value,
           quantity: product.quantity,
           total: product.total_price,
+          total_purchase_cost:
+            (product.purchase_price || 0) * (product.quantity || 1),
           method: paymentMethod?.data?.name,
           with_variant: false,
           productId: product?.id,

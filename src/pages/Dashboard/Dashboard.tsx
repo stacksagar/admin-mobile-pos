@@ -51,7 +51,7 @@ const Dashboard = () => {
               bg="bg-blue-500"
               currency="৳"
             />
-          </div>{' '}
+          </div>
           <div className="xl:col-span-4">
             <DashboardCard
               to="/sales-and-return"

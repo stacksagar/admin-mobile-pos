@@ -56,7 +56,11 @@ export default function Users() {
 
       <div className="max-w-full overflow-hidden">
         <div className="bg-white p-2">
-          <MuiTextField value={searchTerm.value} onChange={searchTerm.change} />
+          <MuiTextField
+            label="Search user"
+            value={searchTerm.value}
+            onChange={searchTerm.change}
+          />
         </div>
         <MuiTable
           onRefreshData={refetch}
