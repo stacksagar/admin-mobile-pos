@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const BASE_URL = `http://localhost:1000/api`;
-const BASE_URL = `https://mobilepos.live.xdomainhost.com`;
+const BASE_URL = `http://localhost:1000/api`;
+// const BASE_URL = `https://mobilepos.live.xdomainhost.com`;
 
 export default BASE_URL;
 
