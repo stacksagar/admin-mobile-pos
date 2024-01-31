@@ -1,6 +1,6 @@
 import { Button, CircularProgress, IconButton } from '@mui/material';
 import useBoolean from '../../hooks/state/useBoolean';
-import AddPaymentPopup from '../PaymentsOld/AddPaymentPopup';
+import AddPaymentPopup from '../Payments/AddPaymentPopup';
 import AddDiscountPopup from '../Discounts/AddDiscountPopup';
 import AddVatPopup from '../Vats/AddVatPopup';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
