@@ -7,20 +7,17 @@ import { useFormik } from 'formik';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import { Button } from '@mui/material';
 import Label from '../../common/Forms/Label';
-import { useAppDispatch } from '../../app/store';
-
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { addPage, updatePage } from '../../app/features/pages/pagesSlice';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { axios_private } from '../../api/api';
+import { PageT } from '../../data';
+import slug_generator from '../../utils/slug_generator';
 
 export default function AddEditPage() {
   const isEditPage = location.pathname.includes('edit-page');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const axios = useAxiosPrivate();
-
-  const dispatch = useAppDispatch();
 
   const page_content = useRef<SunEditorCore>();
 
@@ -33,20 +30,16 @@ export default function AddEditPage() {
       pageFormik.setSubmitting(true);
       const pageData = {
         ...values,
+        slug: slug_generator(values.name),
         content: page_content?.current?.getContents(false),
       };
 
       try {
         if (isEditPage) {
-          const { data } = await axios.put(
-            `/page?id=${searchParams.get('id')}`,
-            pageData
-          );
-          data?.page && dispatch(updatePage(data?.page));
+          await axios.put(`/page/${searchParams.get('id')}`, pageData);
           toast({ message: 'page updated!' });
         } else {
-          const { data } = await axios.post('/page', pageData);
-          data?.page && dispatch(addPage(data?.page));
+          await axios.post('/page', pageData);
           toast({ message: 'Added new page!' });
         }
         navigate('/pages');
@@ -62,8 +55,8 @@ export default function AddEditPage() {
   useEffect(() => {
     if (!isEditPage) return;
     (async () => {
-      const { data: page } = await axios_private.get<Page>(
-        `/page/single?id=${searchParams.get('id')}`
+      const { data: page } = await axios_private.get<PageT>(
+        `/page/${searchParams.get('id')}`
       );
 
       pageFormik.setFieldValue('name', page?.name);

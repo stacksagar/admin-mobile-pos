@@ -1,52 +1,51 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/store';
 import useBoolean from '../../hooks/state/useBoolean';
-import { fetchPages } from '../../app/features/pages/requests';
 import toast_async from '../../utils/toast_async';
-import { axios_private } from '../../api/api';
-import { removePages } from '../../app/features/pages/pagesSlice';
 import Breadcrumb from '../../components/Breadcrumb';
 import MuiTable from '../../common/MaterialUi/Table/MuiTable';
-import pagesTableCells from './pagesTableCells';
+import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
+import pageTableCells from './pageTableCells';
 import { Button } from '@mui/material';
+import usePages from '../../hooks/react-query/usePages';
 import { Link } from 'react-router-dom';
 import FIcon from '../../common/Icons/FIcon';
 
 export default function Pages() {
-  const { data: pages, loading } = useAppSelector((state) => state.pages);
-  const dispatch = useAppDispatch();
-  const deleting = useBoolean();
+  const axios = useAxiosPrivate();
 
-  useEffect(() => {
-    dispatch(fetchPages(null));
-  }, [dispatch]);
+  const { pages, fetchingPages, refetchPages } = usePages();
+
+  const deleting = useBoolean();
 
   async function onMultipleDelete(ids: ID[]) {
     deleting.setTrue();
     try {
-      await toast_async<any>(axios_private.delete('/page', { data: { ids } }), {
-        start: 'Deleting.. wait a moment!',
-        success: `Successfully deleted ${ids?.length} items!`,
-        error: '',
-      });
-      dispatch(removePages(ids));
+      await toast_async<any>(
+        axios.delete('/page/multiple', { data: { ids } }),
+        {
+          start: 'Deleting.. wait a moment!',
+          success: `Successfully deleted ${ids?.length} items!`,
+          error: '',
+        }
+      );
     } finally {
       deleting.setFalse();
+      refetchPages();
     }
   }
 
   return (
     <div>
-      <Breadcrumb pageName="Pages" />
       <br />
+
+      <Breadcrumb pageName="Pages" />
 
       <div className="max-w-full overflow-hidden">
         <MuiTable
-          onRefreshData={() => dispatch(fetchPages(null))}
+          onRefreshData={refetchPages}
           onDelete={onMultipleDelete}
-          tableCells={pagesTableCells}
-          rows={pages}
-          loading={loading}
+          tableCells={pageTableCells()}
+          rows={pages || []}
+          loading={fetchingPages}
           tableTitle="Pages"
           deleting={deleting}
           CustomButton={
