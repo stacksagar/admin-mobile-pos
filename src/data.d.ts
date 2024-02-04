@@ -40,6 +40,15 @@ export interface WarrantyT extends Common {
   due_amount: number;
   description: string;
   status: 'courier' | 'received' | 'delivery' | 'success';
+  variant?: {
+    color: string | undefined;
+    imei: string;
+    ram: string;
+    rom: string;
+    processor: string;
+    price: number;
+    purchase_price: number;
+  };
 }
 
 interface BrandT extends Common {

@@ -15,6 +15,7 @@ import { useAuth } from '../../context/auth';
 import AddEditSupplierPopup from '../Suppliers/AddEditSupplierPopup';
 import toast from '../../libs/toast';
 import mergeVariants from '../../libs/algorithms/merge_variants';
+import { VariantOption } from '../POS/SelectVariantAndQuantity';
 
 export default function AddProductQuantity() {
   const { auth } = useAuth();
@@ -49,6 +50,7 @@ export default function AddProductQuantity() {
 
   const [product, setProduct] = useState({} as ProductT);
   const selectedSupplier = useObject<SupplierT>({} as SupplierT);
+  const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
 
   // fetch all suppliers
   const { data: suppliers = [], refetch: refetchSuppliers } = useQuery<
@@ -121,7 +123,25 @@ export default function AddProductQuantity() {
   }, [newVariants]);
 
   useEffect(() => {
-    if (!product.with_variant) {
+    if (product.with_variant) {
+      // set variants for show before price
+      const variants: ProductVariant[] = [...(product?.variants || [])];
+      const lists = variants?.map((v, index) => ({
+        index,
+        title: `${v?.rom}-${v?.ram} ~ (${v?.processor})`,
+        price: v.sale_price,
+        purchase_price: v.purchase_price,
+        ram: v.ram,
+        rom: v.rom,
+        processor: v.processor,
+        colors: Object.entries(v?.imeis)?.map(([color, imeis]) => ({
+          color,
+          quantity: imeis.length,
+          imeis,
+        })),
+      }));
+      setVariantOptions(lists as any);
+    } else {
       const newStock = Number(new_stock);
       const newPurchasePrice = Number(new_purchase_price);
       const newTotalPurchase = newStock * newPurchasePrice;
@@ -280,6 +300,26 @@ export default function AddProductQuantity() {
       </div>
 
       <div className="col-span-5 space-y-4 bg-white p-4 shadow dark:bg-gray-900">
+        <h2 className="text-xl">Previous Purchase Prices</h2>
+        <div className="space-y-1">
+          {variantOptions
+            ?.sort((a, b) => a.purchase_price - b?.purchase_price)
+            ?.map((v) => (
+              <div
+                key={v.title}
+                className="rounded bg-gray-100 p-2 font-medium text-black shadow"
+              >
+                <p>
+                  RAM:{v?.ram} - ROM:{v?.rom} - P:
+                  {v?.processor}
+                </p>
+                <p>
+                  Purchase Price: <b>{v?.purchase_price}</b>{' '}
+                </p>
+              </div>
+            ))}
+        </div>
+        <div className="my-2 border-t dark:border-gray-500"></div>
         <div className="space-y-1">
           <p className="flex justify-between">
             <b> Previous Stock: </b> <span> {prev_stock.value} </span>

@@ -12,12 +12,8 @@ import onChangeSetURL from '../../utils/onChangeSetURL';
 import InputForUpload from '../../common/Forms/InputForUpload';
 import FIcon from '../../common/Icons/FIcon';
 import CategoriesSelector from '../ProductsCategories/CategoriesSelector/CategoriesSelector';
-import { useAppDispatch, useAppSelector } from '../../app/store';
-import useFetchDispatch from '../../hooks/redux/useFetchDispatch';
-import {
-  fetchStockInProducts,
-  fetchProductsCategories,
-} from '../../app/features/products/requests';
+import { useAppDispatch } from '../../app/store';
+
 import useObject from '../../hooks/state/useObject';
 import useSupplierFormik, {
   SupplierForms,
@@ -33,14 +29,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEditProductData } from './hooks/useEditProductData';
 import useBoolean from '../../hooks/state/useBoolean';
 import AddOrEditCategory from '../ProductsCategories/CategoriesSelector/AddOrEditCategory';
-import { fetchModels } from '../../app/features/models/requests';
-import { fetchBrands } from '../../app/features/brands/requests';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import KeyValueForm from '../../common/Forms/KeyValueForm';
-import { CategoryT, ProductVariant, SupplierT } from '../../data';
+import { BrandT, CategoryT, ProductVariant, SupplierT } from '../../data';
 import MultipleVariants from '../../components/MultipleVariants/MultipleVariants';
 import { useAuth } from '../../context/auth';
-import { useQuery } from '@tanstack/react-query';
+import useSuppliers from '../../hooks/react-query/useSuppliers';
+import useBrands from '../../hooks/react-query/useBrands';
+import AddBrandPopup from '../Brands/AddBrandPopup';
 
 export default function AddAndEditProduct() {
   const { auth } = useAuth();
@@ -49,44 +45,16 @@ export default function AddAndEditProduct() {
   const navigate = useNavigate();
   const axios = useAxiosPrivate();
 
-  const { data: suppliers } = useQuery<SupplierT[]>(
-    ['fetchSuppliers'],
-    async () => {
-      const { data } = await axios.get(`/supplier/all`);
-      return data || [];
-    }
-  );
-
-  const { data: categories } = useAppSelector((s) => s.products_categories);
-  const { data: products } = useAppSelector((s) => s.products);
-  const { data: models } = useAppSelector((s) => s.models);
-  const { data: brands } = useAppSelector((s) => s.brands);
+  const { suppliers } = useSuppliers();
+  const { brands, refetchBrands } = useBrands();
 
   const dispatch = useAppDispatch();
+  const selectedBrand = useObject<BrandT>({} as BrandT);
   const selectedSupplier = useObject<SupplierT>({} as SupplierT);
   const selectedCategory = useObject<CategoryT>({} as CategoryT);
 
   const openAddCategoryModal = useBoolean();
-
-  useFetchDispatch({
-    data: categories,
-    fetchFunc: fetchProductsCategories,
-  });
-
-  useFetchDispatch({
-    data: products,
-    fetchFunc: fetchStockInProducts,
-  });
-
-  useFetchDispatch({
-    data: models,
-    fetchFunc: fetchModels,
-  });
-
-  useFetchDispatch({
-    data: brands,
-    fetchFunc: fetchBrands,
-  });
+  const showAddBrandPopup = useBoolean();
 
   const product_desc_editor = useRef<SunEditorCore>();
   const product_details_editor = useRef<SunEditorCore>();
@@ -132,6 +100,10 @@ export default function AddAndEditProduct() {
 
       if (selectedSupplier?.data?.id) {
         productData.supplierId = selectedSupplier?.data?.id;
+      }
+
+      if (selectedBrand?.data?.id) {
+        productData.brandId = selectedBrand?.data.id;
       }
 
       try {
@@ -334,6 +306,25 @@ export default function AddAndEditProduct() {
                 titleKey="supplier_name"
                 onChange={selectedSupplier.set}
               />
+            )}
+
+            {editProduct?.id ? null : (
+              <div className="flex items-center gap-2">
+                <AddBrandPopup
+                  openModal={showAddBrandPopup}
+                  _finally={refetchBrands}
+                />
+                <MuiSearchSelect
+                  label={selectedBrand?.data?.name ? 'Brand' : 'Select Brand'}
+                  defaultTitle={selectedBrand?.data?.name || null}
+                  options={brands || []}
+                  titleKey="name"
+                  onChange={selectedBrand.set}
+                />
+                <IconButton onClick={showAddBrandPopup.setTrue}>
+                  <FIcon icon="plus" />
+                </IconButton>
+              </div>
             )}
 
             <div className="flex items-center gap-2">

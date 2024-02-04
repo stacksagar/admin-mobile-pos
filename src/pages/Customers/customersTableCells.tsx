@@ -22,13 +22,31 @@ const customersTableCells: MuiTableHeader<UserT & { key: 'sl' }>[] = [
               </a>
             ) : null}
           </p>
-          <p>
+          <>
             {row?.phone ? (
-              <a href={`mailto:${row?.phone}`} className="text-blue-500">
-                <FIcon icon="phone" /> {row?.phone}
-              </a>
+              <>
+                <p>
+                  <a href={`mailto:${row?.phone}`} className="text-blue-500">
+                    <FIcon icon="phone" /> {row?.phone}
+                  </a>
+                </p>
+
+                <p>
+                  <a
+                    target="_blank"
+                    href={`https://api.whatsapp.com/send?phone=${
+                      row?.phone?.includes('+88')
+                        ? row?.phone
+                        : '+88' + row?.phone
+                    }&text=Hi ${row?.name}, `}
+                    className="text-blue-500"
+                  >
+                    <FIcon icon="whatsapp" /> {row?.phone}
+                  </a>
+                </p>
+              </>
             ) : null}
-          </p>
+          </>
         </div>
       );
     },

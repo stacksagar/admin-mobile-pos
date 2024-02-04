@@ -7,16 +7,14 @@ import productsTableCells from './productsTableCells';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import useProducts from '../../hooks/react-query/useProducts';
-import { useEffect } from 'react';
+import useString from '../../hooks/state/useString';
+import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
+import filterItems from '../../utils/filterItems';
 
 export default function Users() {
   const deleting = useBoolean();
 
   const { products, refetchProducts, fetchingProducts } = useProducts();
-
-  useEffect(() => {
-    console.log('products ', products);
-  }, [products]);
 
   async function onMultipleDelete(ids: ID[]) {
     deleting.setTrue();
@@ -36,17 +34,26 @@ export default function Users() {
     }
   }
 
+  const searchTerm = useString('');
+
   return (
     <div>
       <Breadcrumb pageName="Products" />
       <br />
 
       <div className="max-w-full overflow-hidden">
+        <div className="bg-white p-2">
+          <MuiTextField
+            label="Search Products"
+            value={searchTerm.value}
+            onChange={searchTerm.change}
+          />
+        </div>
         <MuiTable
           onRefreshData={refetchProducts}
           onDelete={onMultipleDelete}
           tableCells={productsTableCells}
-          rows={products || []}
+          rows={filterItems(products, searchTerm.value) || []}
           loading={fetchingProducts}
           CustomButton={
             <Button variant="contained" size="medium">

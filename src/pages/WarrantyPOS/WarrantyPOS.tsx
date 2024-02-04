@@ -30,6 +30,7 @@ import toast from '../../libs/toast';
 import error_message from '../../utils/error_message';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
 import useNumber from '../../hooks/state/useNumber';
+import findProductVariantWithIMEI from '../../utils/findProductVariantWithIMEI';
 
 export default function WarrantyPOS() {
   const [params] = useSearchParams();
@@ -141,7 +142,18 @@ export default function WarrantyPOS() {
     })();
   }, [params]);
 
-  console.log(formik.values);
+  const scanIMEI = useString('');
+  function handleWithScan(code: string) {
+    scanIMEI.setCustom(code);
+
+    const { variant, product: searchProduct } = findProductVariantWithIMEI(
+      products,
+      code
+    );
+    if (!searchProduct || !variant) return;
+
+    product.set(searchProduct);
+  }
 
   return (
     <div className="grid grid-cols-1 gap-8 bg-white p-5 lg:grid-cols-2">
@@ -206,6 +218,14 @@ export default function WarrantyPOS() {
       </div>
 
       <div className="flex items-center gap-2">
+        <div className="-mb-2 max-w-[550px]">
+          <MuiTextField
+            value={scanIMEI.value}
+            onChange={(e) => handleWithScan(e.target.value)}
+            label="Scan Barcode"
+          />
+        </div>
+
         <MuiSearchSelect
           label={'Select Product'}
           defaultTitle={product?.data?.name}
@@ -232,6 +252,7 @@ export default function WarrantyPOS() {
           {...formik.getFieldProps('receive_date')}
         />
       </div>
+
       <div>
         <Label>Delivery Date</Label>
         <MuiTextField
@@ -246,21 +267,25 @@ export default function WarrantyPOS() {
         value={delivery_fee.value}
         onChange={delivery_fee.changeOnlyNumber}
       />
+
       <MuiTextField
         label="Warranty Fee"
         value={warranty_fee.value}
         onChange={warranty_fee.changeOnlyNumber}
       />
+
       <MuiTextField
         label="Advance Amount"
         value={advance_amount.value}
         onChange={advance_amount.changeOnlyNumber}
       />
+
       <MuiTextField
         label="Due Amount"
         value={due_amount.value}
         onChange={due_amount.changeOnlyNumber}
       />
+
       <div className="w-full space-y-8">
         <FormControl fullWidth>
           <InputLabel id="status">Select Status</InputLabel>
