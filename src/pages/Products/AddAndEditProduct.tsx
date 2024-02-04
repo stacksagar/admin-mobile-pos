@@ -37,6 +37,7 @@ import { useAuth } from '../../context/auth';
 import useSuppliers from '../../hooks/react-query/useSuppliers';
 import useBrands from '../../hooks/react-query/useBrands';
 import AddBrandPopup from '../Brands/AddBrandPopup';
+import AddEditSupplierPopup from '../Suppliers/AddEditSupplierPopup';
 
 export default function AddAndEditProduct() {
   const { auth } = useAuth();
@@ -45,7 +46,7 @@ export default function AddAndEditProduct() {
   const navigate = useNavigate();
   const axios = useAxiosPrivate();
 
-  const { suppliers } = useSuppliers();
+  const { suppliers, refetchSuppliers } = useSuppliers();
   const { brands, refetchBrands } = useBrands();
 
   const dispatch = useAppDispatch();
@@ -248,9 +249,15 @@ export default function AddAndEditProduct() {
     });
   }, [editProduct]);
 
+  const showAddSupplierPopup = useBoolean();
+  useEffect(() => {
+    refetchSuppliers();
+  }, [showAddSupplierPopup.true]);
+
   return (
     <div>
       <AddOrEditCategory openModal={openAddCategoryModal} />
+      <AddEditSupplierPopup openModal={showAddSupplierPopup} />
 
       <form
         onSubmit={supplierFormik.handleSubmit}
@@ -295,17 +302,25 @@ export default function AddAndEditProduct() {
             />
 
             {editProduct?.id ? null : (
-              <MuiSearchSelect
-                label={
-                  selectedSupplier?.data?.supplier_name
-                    ? 'Supplier'
-                    : 'Select Supplier'
-                }
-                defaultTitle={selectedSupplier?.data?.supplier_name || null}
-                options={suppliers || []}
-                titleKey="supplier_name"
-                onChange={selectedSupplier.set}
-              />
+              <div className="flex items-center gap-2">
+                <MuiSearchSelect
+                  label={
+                    selectedSupplier?.data?.supplier_name
+                      ? 'Supplier'
+                      : 'Select Supplier'
+                  }
+                  defaultTitle={selectedSupplier?.data?.supplier_name || null}
+                  options={suppliers || []}
+                  titleKey="supplier_name"
+                  onChange={selectedSupplier.set}
+                />
+                <Button
+                  onClick={showAddSupplierPopup.toggle}
+                  variant="contained"
+                >
+                  Add
+                </Button>
+              </div>
             )}
 
             {editProduct?.id ? null : (

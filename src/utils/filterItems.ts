@@ -3,6 +3,7 @@ export default function filterItems<T>(
   value?: any,
   keys?: (keyof T)[]
 ) {
+  console.log('items ', items);
   if (!items?.length) return [];
   const filter_keys = keys ? keys : (Object.keys(items[0]) as any);
 

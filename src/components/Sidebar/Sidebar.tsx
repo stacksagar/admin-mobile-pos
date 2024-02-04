@@ -200,12 +200,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   title: 'Moderators',
                   icon: 'user-cog',
                 },
-
-                {
-                  to: '/stock-out-products',
-                  title: 'Stockout Products',
-                  icon: 'p',
-                },
               ]}
             />
           </ul>
