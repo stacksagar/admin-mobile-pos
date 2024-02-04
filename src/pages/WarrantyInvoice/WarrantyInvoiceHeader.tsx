@@ -2,7 +2,7 @@ import { useSetting } from '../../context/setting';
 import { WarrantyT } from '../../data';
 import { showDate } from '../../utils/date';
 
-export default function POSInvoiceHeader({
+export default function WarrantyInvoiceHeader({
   warranty,
 }: {
   warranty: WarrantyT;
@@ -10,12 +10,12 @@ export default function POSInvoiceHeader({
   const { setting } = useSetting();
 
   return (
-    <div className="text-center">
+    <div className="">
       <table className="w-full">
         <tbody>
           <tr>
-            <td colSpan={4}>
-              <div className="w-full">
+            <td>
+              <div className="w-full max-w-[150px]">
                 <img
                   className="mx-auto mr-5 max-h-[128px] max-w-[128px] object-cover object-center"
                   src={setting?.client?.invoice_logo}
@@ -23,7 +23,7 @@ export default function POSInvoiceHeader({
                 />
               </div>
             </td>
-            <td colSpan={8}>
+            <td>
               <div className="w-full text-left">
                 <p className="pt-6 text-2xl">
                   <b> {setting?.client?.invoice_title} </b>

@@ -44,6 +44,7 @@ export default function WarrantyPOS() {
 
   const { products } = useProducts();
   const product = useObject({} as ProductT);
+  const variant = useObject({} as any);
 
   const showAddBrandPopup = useBoolean();
   const { brands, refetchBrands } = useBrands();
@@ -72,9 +73,9 @@ export default function WarrantyPOS() {
         ...values,
         customerId: customer?.data?.id,
         brandId: brand?.data?.id,
-        productId: product?.data?.id,
         categoryId: Number(categoryId.value),
-
+        productId: product?.data?.id,
+        variant: variant.data,
         delivery_fee: Number(delivery_fee.value || '0'),
         warranty_fee: Number(warranty_fee.value || '0'),
         advance_amount: Number(advance_amount.value || '0'),
@@ -146,12 +147,10 @@ export default function WarrantyPOS() {
   function handleWithScan(code: string) {
     scanIMEI.setCustom(code);
 
-    const { variant, product: searchProduct } = findProductVariantWithIMEI(
-      products,
-      code
-    );
-    if (!searchProduct || !variant) return;
-
+    const { variant: searchVariant, product: searchProduct } =
+      findProductVariantWithIMEI(products, code);
+    if (!searchProduct || !searchVariant) return;
+    variant.set(searchVariant);
     product.set(searchProduct);
   }
 

@@ -1,6 +1,6 @@
 import { Button, TableCell, TableRow } from '@mui/material';
 import BasicTable from '../../common/MaterialUi/Table/BasicTable';
-import POSInvoiceHeader from './WarrantyInvoiceHeader';
+import WarrantyInvoiceHeader from './WarrantyInvoiceHeader';
 import { useSetting } from '../../context/setting';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import FIcon from '../../common/Icons/FIcon';
@@ -38,7 +38,7 @@ export default function POSInvoice() {
 
   return (
     <div className="print_area mx-auto w-full rounded bg-white p-6 shadow-sm xl:max-w-screen-md">
-      <POSInvoiceHeader warranty={warranty?.data} />
+      <WarrantyInvoiceHeader warranty={warranty?.data} />
 
       {/* Tables */}
       <div className="custom_muitable_shadow space-y-2 pb-4 pt-2">
@@ -64,7 +64,12 @@ export default function POSInvoice() {
           <TableRow>
             <TableCell>
               <div className=" max-w-[150px]">
-                {warranty?.data?.product?.name}
+                <p> Name: {warranty?.data?.product?.name}</p>
+                <p> RAM: {warranty?.data?.variant?.ram}GB </p>
+                <p> ROM: {warranty?.data?.variant?.rom}GB </p>
+                <p> Processor: {warranty?.data?.variant?.processor} </p>
+                <p> IMEI: {warranty?.data?.variant?.imei} </p>
+                <p> Color: {warranty?.data?.variant?.color} </p>
               </div>
             </TableCell>
 
