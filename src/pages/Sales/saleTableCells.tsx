@@ -146,6 +146,12 @@ function saleTableCells(handleReturnButton: (sale: SaleT) => void) {
             price: sale?.product?.sale_price,
             quantity: sale?.quantity,
             total_price: sale?.total,
+
+            imei: sale?.properties?.imei,
+            ram: sale?.properties?.ram,
+            rom: sale?.properties?.rom,
+            processor: sale?.properties?.processor,
+            color: sale?.properties?.color,
           } as POSProductT);
 
           console.log('sale ', sale?.id);

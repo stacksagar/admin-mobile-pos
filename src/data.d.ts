@@ -71,6 +71,12 @@ interface VatT extends Common {
   type: 'amount' | 'percentage';
 }
 
+export interface TaxT extends Common {
+  name: string;
+  value: number;
+  description?: string;
+}
+
 interface ExpenseT extends Common {
   name?: string;
   date?: string;
@@ -132,6 +138,14 @@ export interface SupplierHistoryT extends Common {
   product: ProductT;
   total_purchase_amount: number;
   quantity: number;
+}
+
+export interface PaymentHistoryT extends Common {
+  user?: UserT;
+  supplier?: SupplierT;
+  paid_amount: number;
+  due_amount: number;
+  description: string;
 }
 
 interface UserT extends Common {

@@ -30,6 +30,7 @@ const Payments = lazy(() => import('../pages/Payments/Payments'));
 const Discounts = lazy(() => import('../pages/Discounts/Discounts'));
 
 const Vats = lazy(() => import('../pages/Vats/Vats'));
+const Taxes = lazy(() => import('../pages/Taxes/Taxes'));
 const SalesAndReturn = lazy(
   () => import('../pages/SalesAndReturn/SalesAndReturn')
 );
@@ -52,6 +53,9 @@ const SupplierHistoryInvoice = lazy(
 
 const SupplierHistories = lazy(
   () => import('../pages/SupplierHistories/SupplierHistories')
+);
+const PaymentHistories = lazy(
+  () => import('../pages/PaymentHistories/PaymentHistories')
 );
 
 const Settings = lazy(() => import('../pages/Settings/Settings'));
@@ -90,6 +94,7 @@ const admin_pages = {
   payments: Payments,
   discounts: Discounts,
   vats: Vats,
+  taxes: Taxes,
   sales: Sales,
   'sales-and-return': SalesAndReturn,
   expenses: Expenses,
@@ -107,6 +112,7 @@ const admin_pages = {
   'warranty-dashboard': WarrantyDashboard,
   'barcode-print': BarcodePrint,
   brands: Brands,
+  'payment-histories': PaymentHistories,
 };
 
 export default admin_pages;

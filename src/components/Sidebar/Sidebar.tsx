@@ -93,6 +93,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   title: 'Purchase Histories',
                   icon: 'history',
                 },
+                {
+                  to: '/payment-histories',
+                  title: 'Payment Histories',
+                  icon: 'history',
+                },
               ]}
             />
 
@@ -179,6 +184,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to: '/vats',
                   title: 'Vats',
                   icon: 'v',
+                },
+                {
+                  to: '/taxes',
+                  title: 'Tax History',
+                  icon: 't',
                 },
                 {
                   to: '/brands',

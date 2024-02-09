@@ -2,26 +2,31 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useBoolean from '../../hooks/state/useBoolean';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { ProductT, ProductVariant, SupplierT } from '../../data';
+import { ProductT, ProductVariant, SupplierT, VatT } from '../../data';
 import { useQuery } from '@tanstack/react-query';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import useObject from '../../hooks/state/useObject';
 import MultipleVariants from '../../components/MultipleVariants/MultipleVariants';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
 import useNumber from '../../hooks/state/useNumber';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import useString from '../../hooks/state/useString';
 import { useAuth } from '../../context/auth';
 import AddEditSupplierPopup from '../Suppliers/AddEditSupplierPopup';
 import toast from '../../libs/toast';
 import mergeVariants from '../../libs/algorithms/merge_variants';
 import { VariantOption } from '../POS/SelectVariantAndQuantity';
+import { getVat } from '../POS/functions';
+import AddVatPopup from '../Vats/AddVatPopup';
+import FIcon from '../../common/Icons/FIcon';
+import useVats from '../../hooks/react-query/useVats';
 
 export default function AddProductQuantity() {
   const { auth } = useAuth();
   const axios = useAxiosPrivate();
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { vats, refetchVats } = useVats();
 
   const [previousImeis, setPrevIMEIs] = useState([] as string[]);
 
@@ -50,6 +55,7 @@ export default function AddProductQuantity() {
 
   const [product, setProduct] = useState({} as ProductT);
   const selectedSupplier = useObject<SupplierT>({} as SupplierT);
+  const selectedVat = useObject<VatT>({} as VatT);
   const [variantOptions, setVariantOptions] = useState<VariantOption[]>([]);
 
   // fetch all suppliers
@@ -65,6 +71,7 @@ export default function AddProductQuantity() {
   });
 
   const showAddSupplierPopup = useBoolean();
+  const showAddVatPopup = useBoolean();
   useEffect(() => {
     refetchSuppliers();
   }, [showAddSupplierPopup.true]);
@@ -210,6 +217,14 @@ export default function AddProductQuantity() {
       toast({
         message: 'Addedd New Quantity!',
       });
+      axios.post('/tax', {
+        name: `Added ${product.name} New Quantity!`,
+        value: getVat(
+          Number(new_purchase_price) * Number(new_stock),
+          selectedVat.data
+        ),
+        description: `purchase new product quantity of ${product.name} ${new_stock} pc. from ${selectedSupplier.data?.supplier_name} - ${selectedSupplier?.data?.email}`,
+      });
 
       navigate('/products');
     } catch (error) {
@@ -235,6 +250,7 @@ export default function AddProductQuantity() {
             titleKey="supplier_name"
             onChange={selectedSupplier.set}
           />
+
           <Button onClick={showAddSupplierPopup.toggle} variant="contained">
             Add
           </Button>
@@ -291,6 +307,36 @@ export default function AddProductQuantity() {
                 Number(e.target.value) > -1 && setNewSalePrice(e.target.value)
               }
             />
+
+            <div className="col-span-full">
+              <div className="flex items-center gap-2">
+                <AddVatPopup
+                  openModal={showAddVatPopup}
+                  _finally={refetchVats}
+                />
+                <MuiSearchSelect
+                  label={selectedVat?.data?.name ? 'Vat' : 'Select Vat'}
+                  defaultTitle={
+                    selectedVat?.data?.name
+                      ? `${selectedVat?.data?.name} ${
+                          selectedVat?.data?.value
+                        }${selectedVat?.data?.type === 'percentage' ? '%' : ''}`
+                      : null
+                  }
+                  options={vats?.map((d) => ({
+                    ...d,
+                    key: `${d.name} ${d?.value}${
+                      d?.type === 'percentage' ? '%' : ''
+                    }`,
+                  }))}
+                  titleKey="key"
+                  onChange={selectedVat.set}
+                />
+                <IconButton onClick={showAddVatPopup.setTrue}>
+                  <FIcon icon="plus" />
+                </IconButton>
+              </div>
+            </div>
           </div>
         )}
 
@@ -354,6 +400,14 @@ export default function AddProductQuantity() {
 
         <h3 className="section_header"> Supplier History </h3>
 
+        <div className="py-2 text-lg font-semibold">
+          Vat:
+          {getVat(
+            Number(new_purchase_price) * Number(new_stock),
+            selectedVat.data
+          ) || 0}
+        </div>
+
         <MuiTextField
           required
           type="number"
@@ -364,6 +418,7 @@ export default function AddProductQuantity() {
           }
           label="Paid Amount"
         />
+
         <MuiTextField
           required
           type="number"

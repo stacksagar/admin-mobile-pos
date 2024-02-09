@@ -68,6 +68,16 @@ export default function PosFooter() {
         due: payable_amount.value - paid_amount,
       });
 
+      axios.post('/tax', {
+        name: `Sale ${
+          products?.data?.length === 1
+            ? `${products?.data[0]?.name}`
+            : 'Product'
+        }`,
+        value: vat_amount.value,
+        description: `sale ${products?.data?.length} product to ${customer?.data?.name}`,
+      });
+
       for (let i = 0; i < products.data?.length; i++) {
         const product = products.data[i];
 

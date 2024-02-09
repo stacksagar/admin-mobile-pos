@@ -5,7 +5,7 @@ import useBoolean from '../../hooks/state/useBoolean';
 import { Link } from 'react-router-dom';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import MuiTextField from '../../common/MaterialUi/Forms/MuiTextField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProductT, ProductVariant, SingleVariant } from '../../data';
 import useCustomers from '../../hooks/react-query/useCustomers';
 import useProducts from '../../hooks/react-query/useProducts';
@@ -26,7 +26,7 @@ interface Props {}
 export default function POSHeaderSelector({}: Props) {
   const { customer, products: pos_products } = usePOS();
 
-  const { customers } = useCustomers();
+  const { customers, refetchCustomers } = useCustomers();
   const { products } = useProducts();
   const [selectedVariants, setSelectedVariants] = useState([] as Barcode[]);
 
@@ -124,12 +124,16 @@ export default function POSHeaderSelector({}: Props) {
     });
   }
 
+  useEffect(() => {
+    refetchCustomers();
+  }, [openAddCustomerPopup.true]);
+
   return (
     <div className="grid gap-2 md:grid-cols-2 lg:gap-6 xl:gap-12">
       <div className="flex items-center gap-2">
         <div className="mt-2">
           <MuiTextField
-            value={barcode} 
+            value={barcode}
             onChange={(e) => handleWithScan(e.target.value)}
             label="Scan Barcode"
           />

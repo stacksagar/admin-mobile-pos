@@ -31,13 +31,16 @@ import useBoolean from '../../hooks/state/useBoolean';
 import AddOrEditCategory from '../ProductsCategories/CategoriesSelector/AddOrEditCategory';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import KeyValueForm from '../../common/Forms/KeyValueForm';
-import { BrandT, CategoryT, ProductVariant, SupplierT } from '../../data';
+import { BrandT, CategoryT, ProductVariant, SupplierT, VatT } from '../../data';
 import MultipleVariants from '../../components/MultipleVariants/MultipleVariants';
 import { useAuth } from '../../context/auth';
 import useSuppliers from '../../hooks/react-query/useSuppliers';
 import useBrands from '../../hooks/react-query/useBrands';
 import AddBrandPopup from '../Brands/AddBrandPopup';
 import AddEditSupplierPopup from '../Suppliers/AddEditSupplierPopup';
+import AddVatPopup from '../Vats/AddVatPopup';
+import useVats from '../../hooks/react-query/useVats';
+import { getVat } from '../POS/functions';
 
 export default function AddAndEditProduct() {
   const { auth } = useAuth();
@@ -48,14 +51,17 @@ export default function AddAndEditProduct() {
 
   const { suppliers, refetchSuppliers } = useSuppliers();
   const { brands, refetchBrands } = useBrands();
+  const { vats, refetchVats } = useVats();
 
   const dispatch = useAppDispatch();
   const selectedBrand = useObject<BrandT>({} as BrandT);
   const selectedSupplier = useObject<SupplierT>({} as SupplierT);
   const selectedCategory = useObject<CategoryT>({} as CategoryT);
+  const selectedVat = useObject<VatT>({} as VatT);
 
   const openAddCategoryModal = useBoolean();
   const showAddBrandPopup = useBoolean();
+  const showAddVatPopup = useBoolean();
 
   const product_desc_editor = useRef<SunEditorCore>();
   const product_details_editor = useRef<SunEditorCore>();
@@ -123,9 +129,20 @@ export default function AddAndEditProduct() {
               quantity: productFormik.values.in_stock,
             },
           });
+
+          axios.post('/tax', {
+            name: `Purchase ${productFormik.values.name}`,
+            value: getVat(
+              productFormik.values.total_purchase_amount,
+              selectedVat.data
+            ),
+            description: `purchase ${values.name} ${values.in_stock} pc. from ${selectedSupplier.data?.supplier_name} - ${selectedSupplier?.data?.email}`,
+          });
+
           data && dispatch(addProduct(data));
           toast({ message: 'Added new product!' });
         }
+        
         navigate('/products');
       } catch (error) {
         toast({
@@ -342,6 +359,36 @@ export default function AddAndEditProduct() {
               </div>
             )}
 
+            {editProduct?.id ? null : (
+              <div className="flex items-center gap-2">
+                <AddVatPopup
+                  openModal={showAddVatPopup}
+                  _finally={refetchVats}
+                />
+                <MuiSearchSelect
+                  label={selectedVat?.data?.name ? 'Vat' : 'Select Vat'}
+                  defaultTitle={
+                    selectedVat?.data?.name
+                      ? `${selectedVat?.data?.name} ${
+                          selectedVat?.data?.value
+                        }${selectedVat?.data?.type === 'percentage' ? '%' : ''}`
+                      : null
+                  }
+                  options={vats?.map((d) => ({
+                    ...d,
+                    key: `${d.name} ${d?.value}${
+                      d?.type === 'percentage' ? '%' : ''
+                    }`,
+                  }))}
+                  titleKey="key"
+                  onChange={selectedVat.set}
+                />
+                <IconButton onClick={showAddVatPopup.setTrue}>
+                  <FIcon icon="plus" />
+                </IconButton>
+              </div>
+            )}
+
             <div className="flex items-center gap-2">
               <div className="w-full">
                 <CategoriesSelector
@@ -494,7 +541,15 @@ export default function AddAndEditProduct() {
             {editProduct?.id ? null : (
               <div className="space-y-3">
                 <h3 className="section_header">Supplier Invoice History</h3>
-                {supplierFormik.values.supplier_name}
+
+                <div className="py-2 text-lg font-semibold">
+                  Vat:
+                  {getVat(
+                    productFormik.values.total_purchase_amount,
+                    selectedVat.data
+                  ) || 0}
+                </div>
+
                 <MuiTextField
                   required
                   type="number"

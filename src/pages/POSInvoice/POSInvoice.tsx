@@ -4,6 +4,7 @@ import POSInvoiceHeader from './POSInvoiceHeader';
 import POSInvoiceFooter from './POSInvoiceFooter';
 import { usePOS } from '../../context/pos/pos';
 import { uid } from 'uid';
+import Barcode from 'react-barcode';
 
 export default function POSInvoice() {
   const {
@@ -27,7 +28,7 @@ export default function POSInvoice() {
               <b>NAME</b>
             </TableCell>
             <TableCell className="border-default border-l">
-              <b>CODE</b>
+              <b>IMEI</b>
             </TableCell>
             <TableCell className="border-default border-l">
               <b>PRICE</b>
@@ -43,11 +44,27 @@ export default function POSInvoice() {
           {products?.data?.map((product) => (
             <TableRow key={uid()}>
               <TableCell>
-                <div className=" max-w-[150px]">{product?.name}</div>
+                <div className=" max-w-[150px]">
+                  <p className="font-medium">{product?.name}</p>
+                  {product?.with_variant ? (
+                    <>
+                      <p className="font-medium">
+                        RAM/ROM: {product?.ram}/{product?.rom}
+                      </p>
+                      <p className="font-medium"> Color: {product?.color} </p>
+                    </>
+                  ) : null}
+                </div>
               </TableCell>
 
               <TableCell className="border-default border-l">
-                {product?.barcode}
+                {product?.imei ? (
+                  <>
+                    <Barcode height={30} value={product?.imei || ''} />
+                  </>
+                ) : (
+                  '-'
+                )}
               </TableCell>
 
               <TableCell className="border-default border-l">

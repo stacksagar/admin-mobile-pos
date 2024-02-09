@@ -4,21 +4,20 @@ import Breadcrumb from '../../components/Breadcrumb';
 import MuiTable from '../../common/MaterialUi/Table/MuiTable';
 import supplierHistoriesTableCells from './supplierHistoriesTableCells';
 import useAxiosPrivate from '../../hooks/axios/useAxiosPrivate';
-import { useQuery } from '@tanstack/react-query';
 import { SupplierHistoryT, SupplierT } from '../../data';
 import MuiSearchSelect from '../../common/MaterialUi/Forms/MuiSearchSelect';
 import useObject from '../../hooks/state/useObject';
 import useSuppliers from '../../hooks/react-query/useSuppliers';
+import PaidSupplierPopup from './PaidSupplierPopup';
+import useSupplierHistories from '../../hooks/react-query/useSuppliersHistories';
 export default function SupplierHistories() {
   const axios = useAxiosPrivate();
 
-  const { data, refetch, isLoading } = useQuery<SupplierHistoryT[]>(
-    ['fetchSupplierHistory'],
-    async () => {
-      const { data } = await axios.get(`/supplier-history/all`);
-      return data || [];
-    }
-  );
+  const {
+    supplierHistories,
+    refetchSupplierHistories,
+    fetchingSupplierHistories,
+  } = useSupplierHistories();
 
   const deleting = useBoolean();
 
@@ -35,16 +34,29 @@ export default function SupplierHistories() {
       );
     } finally {
       deleting.setFalse();
-      refetch();
+      refetchSupplierHistories();
     }
   }
 
   const { suppliers } = useSuppliers();
   const selectedSupplier = useObject({} as SupplierT);
 
+  const openPaidPopupSupplier = useBoolean();
+  const selectedSupplierHistory = useObject({} as SupplierHistoryT);
+
+  function toggleAddPopupBtn(history: SupplierHistoryT) {
+    selectedSupplierHistory.set(history);
+    openPaidPopupSupplier.toggle();
+  }
+
   return (
     <div>
       <Breadcrumb pageName="Purchased Histories" />
+      <PaidSupplierPopup
+        openModal={openPaidPopupSupplier}
+        history={selectedSupplierHistory.data}
+        _finally={refetchSupplierHistories}
+      />
       <br />
 
       <div className="max-w-full overflow-hidden">
@@ -59,17 +71,17 @@ export default function SupplierHistories() {
         </div>
 
         <MuiTable
-          onRefreshData={refetch}
+          onRefreshData={refetchSupplierHistories}
           onDelete={onMultipleDelete}
-          tableCells={supplierHistoriesTableCells}
+          tableCells={supplierHistoriesTableCells({ toggleAddPopupBtn })}
           rows={
             (selectedSupplier?.data?.id
-              ? data?.filter(
+              ? supplierHistories?.filter(
                   (item) => item.supplierId === selectedSupplier?.data?.id
                 )
-              : data) || []
+              : supplierHistories) || []
           }
-          loading={isLoading}
+          loading={fetchingSupplierHistories}
           tableTitle="Supplier Purchase Histories"
           deleting={deleting}
         />

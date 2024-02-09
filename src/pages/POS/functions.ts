@@ -19,9 +19,10 @@ export function getDiscount(total: number, discount: DiscountT) {
 }
 
 export function getVat(total: number, vat: VatT) {
+  if (!vat) return 0;
   const isByPercentage = vat?.type === 'percentage';
   if (isByPercentage) {
-    return (total / 100) * vat?.value;
+    return Math.ceil((total / 100) * vat?.value);
   } else {
     return vat?.value;
   }

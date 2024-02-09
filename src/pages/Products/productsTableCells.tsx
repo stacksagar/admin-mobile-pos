@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-import { showDate } from '../../utils/date';
 import { Link } from 'react-router-dom';
 import { ProductT } from '../../data';
 
@@ -7,13 +6,6 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
   {
     key: 'id',
     label: 'ID',
-  },
-  {
-    key: 'createdAt',
-    label: 'Date',
-    RenderComponent({ row: product }) {
-      return <div> {showDate(product?.createdAt, true)} </div>;
-    },
   },
   { key: 'name' },
   {
@@ -35,29 +27,33 @@ const productsTableCells: MuiTableHeader<ProductT>[] = [
     },
   },
   {
-    key: 'in_stock',
-    label: 'In Stock',
-  },
-  {
-    key: 'total_sale',
-    label: 'Total Sales',
-  },
-  {
-    key: 'custom',
-    label: 'Custom Properties',
-    RenderComponent({ row: product }) {
+    key: 'variants',
+    RenderComponent({ row }) {
       return (
-        <div className="flex flex-col gap-2">
-          {Object.entries(product?.custom || {}).map(([key, value]) => (
-            <div key={key}>
-              {key}: {value}
+        <div className="space-y-2">
+          <div>
+            <p className="font-semibold"> Total Stock: {row?.in_stock} </p>
+            <p className="font-semibold"> Total Sale: {row?.total_sale} </p>
+          </div>
+          {row?.variants?.map((v) => (
+            <div className="w-fit rounded bg-[#5555551f] bg-opacity-90 p-2">
+              <p>
+                Ram/Rom/Process: {v?.ram}GB/{v?.rom}GB/{v?.processor}
+              </p>
+              <p> Purchase Price: {v?.purchase_price} </p>
+              <p>
+                Stock:{' '}
+                {Object.values(v?.imeis)?.reduce(
+                  (acc, val) => acc + val.length,
+                  0
+                )}
+              </p>
             </div>
           ))}
         </div>
       );
     },
   },
-
   {
     key: 'actions',
     ActionButtons({ row: product }) {
